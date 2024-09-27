@@ -4,7 +4,7 @@ Scriptname DW_Status_Player_Alias extends ReferenceAlias
 
 
 Event OnPlayerLoadGame()
-	Quest status_qst = Game.GetFormFromFile(0x998C, "DW.esp") as Quest
+	Quest status_qst = Game.GetFormFromFile(0xA889, "DW.esp") as Quest
 	status_qst.Stop()
 	status_qst.Start()
 	

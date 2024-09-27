@@ -1,31 +1,31 @@
 ﻿<fomod>
-  <Name>Dripping when aroused</Name>
-  <Version>03-03-2022</Version>
-  <Author>Ed86</Author>
+  <Name>Dripping When Aroused</Name>
+  <Version>09-27-2024</Version>
+  <Author>Ed86, updated by stnfnk</Author>
   <Description>
   
-Requires(Sexlab):
--SKSE
--SexLab Framework
--(Optional)SexLab Aroused (Redux), required for dripping based on arousal
--(Optional)Schlongs of Skyrim(full), required for futa support
--(Optional)DDi/Zap, required for gag drooling support
+Requires (Sexlab or OStim):
+-SKSE + SPID
+-SexLab Framework or OStim (SA)
+-(Optional) SexLab Aroused or OSL Aroused, required for dripping based on arousal
+-(Optional) SOS Full or TNG, required for futa support
+-(Optional) DDi/ZAZ, required for gag drooling support
 
 OR
 
-Requires(Flower Girls):
--SKSE
+Requires (Flower Girls):
+-SKSE + SPID
 -Flower Girls SE
--(Optional)Aroused (Redux), required for dripping based on arousal
--(Optional)Schlongs of Skyrim(full), required for futa support + PapyrusUtil
+-(Optional) Aroused (Redux), required for dripping based on arousal
+-(Optional) SOS Full or TNG + PapyrusUtil, required for futa support
 
   
 Description:
 When female becomes sufficiently aroused, her pussy will start leaking juices.(60s)
 After having anal or vaginal intercourse, character will leak cum.(60s)
-Having vaginal intercourse will cause female character to loose virginity and bleed.(60s)
+Having vaginal intercourse will cause female character to lose virginity and bleed.(60s)
 After having orgasm females will squirt.(10s)
-Wearing Gag will cause drooling effect.(10s)
+Wearing gag will cause drooling effect.(10s)
 When PC is aroused enough, you will hear heartbeat, breathing(incl. NPCs) and have a blurred vision.
 All effects can be had at same time, effects work through clothes.
  

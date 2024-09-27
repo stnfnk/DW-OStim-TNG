@@ -5,7 +5,7 @@ Event OnInit()
 EndEvent
 
 bool Function IsWearingDDGag (Actor akActor)
-	DW_CORE CORE = Game.GetFormFromFile(0xD62, "DW.esp") as DW_CORE
+	DW_CORE CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
 	if CORE.Plugin_DD
 		Keyword zad_DeviousGag = Keyword.GetKeyword("zad_DeviousGag")
 		if ( zad_DeviousGag )
@@ -18,7 +18,7 @@ bool Function IsWearingDDGag (Actor akActor)
 EndFunction
 
 bool Function IsWearingDDBlindfold (Actor akActor)
-	DW_CORE CORE = Game.GetFormFromFile(0xD62, "DW.esp") as DW_CORE
+	DW_CORE CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
 	if CORE.Plugin_DD
 		Keyword zad_DeviousBlindfold = Keyword.GetKeyword("zad_DeviousBlindfold")
 		if ( zad_DeviousBlindfold )

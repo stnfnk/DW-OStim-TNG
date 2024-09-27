@@ -10,7 +10,7 @@ float strSound
 
 Event OnEffectStart( Actor akTarget, Actor akCaster )
 	akActor = akTarget
-	CORE = Game.GetFormFromFile(0xD62, "DW.esp") as DW_CORE
+	CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
 	RegisterForSingleUpdate(1)
 EndEvent
 
@@ -67,7 +67,7 @@ Event OnUpdate()
 EndEvent
 
 Event OnPlayerLoadGame()
-	CORE = Game.GetFormFromFile(0xD62, "DW.esp") as DW_CORE
+	CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
 	;CORE.sexlab.Log("OnPlayerLoadGame(), Heartbeat effect stopping ")
 	akActor.RemoveSpell(CORE.DW_Heart_Spell)
 EndEvent

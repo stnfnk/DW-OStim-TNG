@@ -5,7 +5,7 @@ Event OnInit()
 EndEvent
 
 bool Function IsWearingZaZGag (Actor akActor)
-	DW_CORE CORE = Game.GetFormFromFile(0xD62, "DW.esp") as DW_CORE
+	DW_CORE CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
 	if CORE.Plugin_ZaZ
 		Keyword zbfWornGag = Keyword.GetKeyword("zbfWornGag")
 		if ( zbfWornGag )
@@ -18,7 +18,7 @@ bool Function IsWearingZaZGag (Actor akActor)
 EndFunction
 
 bool Function IsWearingZaZBlindfold (Actor akActor)
-	DW_CORE CORE = Game.GetFormFromFile(0xD62, "DW.esp") as DW_CORE
+	DW_CORE CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
 	if CORE.Plugin_ZaZ
 		Keyword zbfWornBlindfold = Keyword.GetKeyword("zbfWornBlindfold")
 		if ( zbfWornBlindfold )

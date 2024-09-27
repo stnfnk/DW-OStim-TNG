@@ -26,10 +26,10 @@ GlobalVariable Property DW_ModState14 Auto		; Virginity loss texture effect
 GlobalVariable Property DW_ModState15 Auto		; Virginity game messages
 GlobalVariable Property DW_ModState16 Auto		; PC Milkleak effect
 GlobalVariable Property DW_ModState17 Auto		; NPC Milkleak effect
-GlobalVariable Property DW_Cloak_Range Auto
+;GlobalVariable Property DW_Cloak_Range Auto
 
 GlobalVariable Property DW_Timer Auto
-GlobalVariable Property DW_bCloak Auto
+;GlobalVariable Property DW_bCloak Auto
 GlobalVariable Property DW_PluginsCheck Auto
 GlobalVariable Property DW_SOS_Check Auto
 GlobalVariable Property DW_bAnimating Auto
@@ -189,7 +189,7 @@ Event OnUpdate()
 		DW_DrippingGag_Spell.cast( akActor )
 	endif
 	
-	;npc cloak
+;/ 	;npc cloak
 	if DW_bCloak.GetValue() == 1
 		Cell akTargetCell = akActor.GetParentCell()
 		int iRef = 0
@@ -219,7 +219,7 @@ Event OnUpdate()
 			
 			iRef = iRef + 1
 		endWhile
-	endif
+	endif /;
 	
 	if DW_Timer.GetValue() > 0
 		RegisterForSingleUpdate(DW_Timer.GetValue())

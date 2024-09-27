@@ -12,14 +12,14 @@ float strSound
 
 Event OnEffectStart( Actor akTarget, Actor akCaster )
 	akActor = akTarget
-	CORE = Game.GetFormFromFile(0xD62, "DW.esp") as DW_CORE
+	CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
 	RegisterForSingleUpdate(1)
 EndEvent
 
 Event OnUpdate()
 	;sound Breath high,low,none
 	;CORE.sexlab.Log(Sound1ID+" Breath cycle start "+Sound2ID)
-	if (CORE.DW_ModState08.GetValue() == 1 && akActor == Game.GetPlayer()) || (CORE.DW_ModState00.GetValue() == 1 && akActor != Game.GetPlayer())
+	if akActor != None && (CORE.DW_ModState08.GetValue() == 1 && akActor == Game.GetPlayer()) || (CORE.DW_ModState00.GetValue() == 1 && akActor != Game.GetPlayer())
 		float rank = CORE.SLA.GetActorArousal(akActor)
 		if CORE.DW_ModState12.GetValue() == 0
 			strSound = rank/100
@@ -80,7 +80,7 @@ Event OnUpdate()
 EndEvent
 
 Event OnPlayerLoadGame()
-	CORE = Game.GetFormFromFile(0xD62, "DW.esp") as DW_CORE
+	CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
 	;CORE.sexlab.Log("OnPlayerLoadGame(), Breathing effect stopping ")
 	akActor.RemoveSpell(CORE.DW_Breath_Spell)
 EndEvent

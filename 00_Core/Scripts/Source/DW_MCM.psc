@@ -90,11 +90,11 @@ function Page_Settings()
 			AddSliderOptionST("Arousal_threshold_Slider", "$DW_DRIPAROUSALTHRES", DW_Arousal_threshold.GetValue())
 			AddToggleOptionST("DrippingSLGender_Toggle", "$DW_DRIPAROUSALEFFSLGender", DW_bUseSLGenderForDripp.GetValue())
 			AddEmptyOption()
-
+;/ 
 			AddToggleOptionST("Cloak_Toggle", "$DW_NPCDRIPCLOAK", DW_bCloak.GetValue())
 			AddSliderOptionST("Cloak_Range_Slider", "$DW_CLOAKRANGE", DW_Cloak_Range.GetValue() as int)
 			AddEmptyOption()
-			
+			 /;
 		
 			AddToggleOptionST("CumDripping_Toggle", "$DW_DRIPCUMEFF", DW_ModState02.GetValue())
 			AddToggleOptionST("SquirtDripping_Toggle", "$DW_FEMSQUIRTEFF", DW_ModState03.GetValue())
@@ -141,13 +141,13 @@ function Page_Settings()
 		AddEmptyOption()
 		AddHeaderOption("$DW_PSE")
 		Actor PlayerRef = Game.GetPlayer()
-			if PlayerRef.HasMagicEffect(Game.GetFormFromFile(0x9eef , "DW.esp") as magiceffect)
+			if PlayerRef.HasMagicEffect(Game.GetFormFromFile(0xA88A , "DW.esp") as magiceffect)
 					AddTextOption("$DW_PHVE", OPTION_FLAG_DISABLED)
 			endIf
-			if PlayerRef.HasMagicEffect(Game.GetFormFromFile(0x9ef0 , "DW.esp") as magiceffect)
+			if PlayerRef.HasMagicEffect(Game.GetFormFromFile(0xA88B , "DW.esp") as magiceffect)
 					AddTextOption("$DW_PHBE", OPTION_FLAG_DISABLED)
 			endIf
-			if PlayerRef.HasMagicEffect(Game.GetFormFromFile(0x9ef1 , "DW.esp") as magiceffect)
+			if PlayerRef.HasMagicEffect(Game.GetFormFromFile(0xA88C , "DW.esp") as magiceffect)
 					AddTextOption("$DW_PHHE", OPTION_FLAG_DISABLED)
 			endIf
 			AddEmptyOption()
@@ -198,7 +198,7 @@ function Page_Virginity()
 				i -= 1
 			endwhile
 endfunction
-
+;/ 
 state Cloak_Toggle
 	event OnSelectST()
 		if DW_bCloak.GetValue() != 1
@@ -227,7 +227,7 @@ state Cloak_Range_Slider
 		SetSliderOptionValueST(DW_Cloak_Range.GetValue())
 	endEvent
 endState
-
+ /;
 state PreDripping_Toggle
 	event OnSelectST()
 		if DW_ModState01.GetValue() != 1

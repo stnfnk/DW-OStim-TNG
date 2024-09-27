@@ -3,7 +3,7 @@ Scriptname DW_DrippingScr extends ReferenceAlias
 DW_CORE CORE
 
 Event OnInit()
-	CORE = Game.GetFormFromFile(0xD62, "DW.esp") as DW_CORE
+	CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
 	CORE.Startup()
 	;debug.Notification("$DW_INITDONE")
 Endevent
@@ -21,7 +21,7 @@ Endevent
 ;EndFunction
 
 Event OnPlayerLoadGame()
-	CORE = Game.GetFormFromFile(0xD62, "DW.esp") as DW_CORE
+	CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
 	;DW_JsonRebuild()
 	CORE.Startup()
 EndEvent

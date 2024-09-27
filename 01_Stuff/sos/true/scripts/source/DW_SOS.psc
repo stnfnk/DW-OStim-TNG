@@ -1,14 +1,22 @@
 Scriptname DW_SOS extends Quest
 
+DW_SL property SL auto
+
+
+
 Event OnInit()
-	DW_CORE CORE = Game.GetFormFromFile(0xD62, "DW.esp") as DW_CORE
+	DW_CORE CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
 	CORE.DW_SOS_Check.SetValue(2)
 EndEvent
 
 bool Function GetSOS(Actor akActor)
 	bool hasSchlong = false
-	DW_CORE CORE = Game.GetFormFromFile(0xD62, "DW.esp") as DW_CORE
-	if CORE.Plugin_SOS
+	DW_CORE CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
+  if CORE.Plugin_TNG
+    if SL.GetGender(akActor) != 1
+      hasSchlong = True
+    endif
+	elseif CORE.Plugin_SOS
 		Quest sosScriptQuest = Quest.GetQuest("SOS_SetupQuest")
 		if (sosScriptQuest)
 			SOS_SetupQuest_Script sosScript = sosScriptQuest as SOS_SetupQuest_Script

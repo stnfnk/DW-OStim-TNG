@@ -35,9 +35,9 @@
 								<type name="Required"/>
 							</typeDescriptor>
 						</plugin>
-						<plugin name="Schlongs of Skyrim(FULL)">
+						<plugin name="SOS Full or TNG">
 							<description>
-								Requires Schlongs of Skyrim(FULL) + PapyrusUtil
+								Requires SOS Full or TNG + PapyrusUtil
 							</description>
 							<conditionFlags>
 								<flag name="SoS">True</flag>
