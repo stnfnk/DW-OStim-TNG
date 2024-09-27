@@ -1,5 +1,6 @@
 Scriptname DW_CORE extends Quest
 
+
 DW_SOS property SOS auto
 DW_SL property SL auto
 DW_SLA property SLA auto
@@ -72,10 +73,14 @@ Sound Property Heartbeat2 Auto				;High
 ImageSpaceModifier Property HighArousalVisual Auto
 ImageSpaceModifier Property LowArousalVisual Auto
 
+
 Bool Property Plugin_DD = false auto
 Bool Property Plugin_ZaZ = false auto
 Bool Property Plugin_SOS = false auto
+Bool Property Plugin_TNG = false auto
 
+;OStim
+Bool Property Plugin_OStim = false auto
 ;Sexlab
 Bool Property Plugin_SL = false auto
 Bool Property Plugin_SLAR = false auto
@@ -87,19 +92,34 @@ Function Startup()
 	Plugin_DD = (Game.GetModbyName("Devious Devices - Assets.esm") != 255)
 	Plugin_ZaZ = (Game.GetModbyName("ZaZAnimationPack.esm") != 255)
 	Plugin_SOS = (Game.GetModbyName("Schlongs of Skyrim.esp") != 255)
+  Plugin_TNG = (Game.GetModbyName("TheNewGentleman.esp") != 255)
+  
+  Plugin_OStim = (Game.GetModbyName("OStim.esp") != 255)
 	
 	Plugin_SL = (Game.GetModbyName("SexLab.esm") != 255)
 	Plugin_SLAR = (Game.GetModbyName("SexLabAroused.esm") != 255)
 
 	Plugin_FGSE = (Game.GetModbyName("FlowerGirls SE.esm") != 255)
 	Plugin_AR = (Game.GetModbyName("ArousedRedux.esm") != 255)
-
-	SL.RegisterForModEvent("OrgasmStart", "OnSexLabOrgasm")
-	SL.RegisterForModEvent("SexLabOrgasmSeparate", "OnSexLabOrgasmSeparate")
-	SL.RegisterForModEvent("DeviceActorOrgasm", "OnDDOrgasm")
-	SL.RegisterForModEvent("AnimationStart", "OnAnimationStart")
-	SL.RegisterForModEvent("AnimationEnd", "OnAnimationEnd")
-	SL.RegisterForModEvent("StageStart", "OnSexLabStageChange")
+  
+  if Plugin_OStim
+    SL.RegisterForModEvent("ostim_thread_start", "OStimManager")
+    SL.RegisterForModEvent("ostim_thread_scenechanged", "OStimManager")
+    SL.RegisterForModEvent("ostim_thread_speedchanged", "OStimManager")
+    SL.RegisterForModEvent("ostim_actor_orgasm", "OStimManager")
+    SL.RegisterForModEvent("ostim_thread_end", "OStimManager")
+    ;;;;;;;;;;;;;;;;
+  endif
+  
+	if Plugin_SL
+    SL.RegisterForModEvent("OrgasmStart", "OnSexLabOrgasm")
+    SL.RegisterForModEvent("SexLabOrgasmSeparate", "OnSexLabOrgasmSeparate")
+    SL.RegisterForModEvent("DeviceActorOrgasm", "OnDDOrgasm")
+    SL.RegisterForModEvent("AnimationStart", "OnAnimationStart")
+    SL.RegisterForModEvent("AnimationEnd", "OnAnimationEnd")
+    SL.RegisterForModEvent("StageStart", "OnSexLabStageChange")
+  endif
+  
 	RegisterForModEvent("RestoreVirginity", "RV")
 	
 	Utility.wait(1)
