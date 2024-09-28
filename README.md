@@ -8,8 +8,8 @@ Updated Classic SL/FG Arousal mod by Ed86
 
 ## Requirements
 - Requires SPID and SKSE
-- Choose SL install for OStim.
-- Choose SOS install for TNG.
+- Default SL install for SL/OStim.
+- Choose SOS install for SOS/TNG.
 
 
 Updated 2024 by stnfnk
