@@ -177,9 +177,8 @@ Function Orgasm(Actor akActor, String _args)
   if CORE.DW_ModState02.GetValue() == 1
 
     if CORE.Plugin_OStim
-      Actor[] actors = new actor[5]
       int ostimTid = OActor.GetSceneID(akActor)
-      actors = OThread.GetActors(ostimTid)
+      Actor[] actors = OThread.GetActors(ostimTid)
       string ostimScene = OThread.GetScene(ostimTid)
       int vaginal = OMetadata.FindActionForTarget(ostimScene, 1, "vaginalsex")
       int anal = OMetadata.FindActionForTarget(ostimScene, 1, "analsex")
