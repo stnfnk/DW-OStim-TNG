@@ -26,10 +26,8 @@ GlobalVariable Property DW_ModState14 Auto		; Virginity loss texture effect
 GlobalVariable Property DW_ModState15 Auto		; Virginity game messages
 GlobalVariable Property DW_ModState16 Auto		; PC Milkleak effect
 GlobalVariable Property DW_ModState17 Auto		; NPC Milkleak effect
-;GlobalVariable Property DW_Cloak_Range Auto
 
 GlobalVariable Property DW_Timer Auto
-;GlobalVariable Property DW_bCloak Auto
 GlobalVariable Property DW_PluginsCheck Auto
 GlobalVariable Property DW_SOS_Check Auto
 GlobalVariable Property DW_bAnimating Auto
@@ -188,38 +186,6 @@ Event OnUpdate()
 	if DDi.IsWearingDDGag(akActor) || zbf.IsWearingZaZGag(akActor)
 		DW_DrippingGag_Spell.cast( akActor )
 	endif
-	
-;/ 	;npc cloak
-	if DW_bCloak.GetValue() == 1
-		Cell akTargetCell = akActor.GetParentCell()
-		int iRef = 0
-		
-		while iRef <= akTargetCell.getNumRefs(43) ;GetType() 62-char,44-lvchar,43-npc
-			Actor aNPC = akTargetCell.getNthRef(iRef, 43) as Actor
-			
-			if aNPC != none
-				;dripping wet npc
-				If SLA.GetActorArousal(aNPC) >= DW_Arousal_threshold.GetValue()
-					If DW_bUseSLGenderForDripp.GetValue() != 1\
-					|| (SL.GetGender( aNPC ) == 1 && aNPC.GetLeveledActorBase().GetSex() == 1 && DW_bUseSLGenderForDripp.GetValue() == 1)
-						DW_Dripping_Spell.cast( aNPC )
-					EndIf
-				EndIf
-				
-				;dripping gag npc
-				if DDi.IsWearingDDGag(aNPC) || zbf.IsWearingZaZGag(aNPC)
-					DW_DrippingGag_Spell.cast( aNPC )
-				endif
-				
-				;breath npc
-				if DW_ModState00.GetValue() == 1 && !aNPC.HasSpell( DW_Breath_Spell ) && aNPC != akActor
-					aNPC.AddSpell( DW_Breath_Spell, false )
-				endif
-			endif
-			
-			iRef = iRef + 1
-		endWhile
-	endif /;
 	
 	if DW_Timer.GetValue() > 0
 		RegisterForSingleUpdate(DW_Timer.GetValue())

@@ -27,10 +27,8 @@ GlobalVariable Property DW_ModState14 Auto		; Virginity loss texture effect
 GlobalVariable Property DW_ModState15 Auto		; Virginity game messages
 GlobalVariable Property DW_ModState16 Auto		; PC Milkleak effect
 GlobalVariable Property DW_ModState17 Auto		; NPC Milkleak effect
-GlobalVariable Property DW_Cloak_Range Auto
 
 GlobalVariable Property DW_Timer Auto
-GlobalVariable Property DW_bCloak Auto
 GlobalVariable Property DW_PluginsCheck Auto
 GlobalVariable Property DW_SOS_Check Auto
 GlobalVariable Property DW_bAnimating Auto
@@ -90,11 +88,6 @@ function Page_Settings()
 			AddSliderOptionST("Arousal_threshold_Slider", "$DW_DRIPAROUSALTHRES", DW_Arousal_threshold.GetValue())
 			AddToggleOptionST("DrippingSLGender_Toggle", "$DW_DRIPAROUSALEFFSLGender", DW_bUseSLGenderForDripp.GetValue())
 			AddEmptyOption()
-;/ 
-			AddToggleOptionST("Cloak_Toggle", "$DW_NPCDRIPCLOAK", DW_bCloak.GetValue())
-			AddSliderOptionST("Cloak_Range_Slider", "$DW_CLOAKRANGE", DW_Cloak_Range.GetValue() as int)
-			AddEmptyOption()
-			 /;
 		
 			AddToggleOptionST("CumDripping_Toggle", "$DW_DRIPCUMEFF", DW_ModState02.GetValue())
 			AddToggleOptionST("SquirtDripping_Toggle", "$DW_FEMSQUIRTEFF", DW_ModState03.GetValue())
@@ -198,36 +191,8 @@ function Page_Virginity()
 				i -= 1
 			endwhile
 endfunction
-;/ 
-state Cloak_Toggle
-	event OnSelectST()
-		if DW_bCloak.GetValue() != 1
-			DW_bCloak.SetValue(1)
-		else
-			DW_bCloak.SetValue(0)
-		endif
-		SetToggleOptionValueST(DW_bCloak.GetValue())
-	endEvent
-	
-	event OnHighlightST()
-		SetInfoText("$DW_NPCDRIPCLOAK_DESC")
-	endEvent
-endState
 
-state Cloak_Range_Slider
-	event OnSliderOpenST()
-		SetSliderDialogStartValue(DW_Cloak_Range.GetValue())
-		SetSliderDialogDefaultValue(500)
-		SetSliderDialogRange(0, 5000)
-		SetSliderDialogInterval(1)
-	endEvent
 
-	event OnSliderAcceptST(float value)
-		DW_Cloak_Range.SetValue(value)
-		SetSliderOptionValueST(DW_Cloak_Range.GetValue())
-	endEvent
-endState
- /;
 state PreDripping_Toggle
 	event OnSelectST()
 		if DW_ModState01.GetValue() != 1

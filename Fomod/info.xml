@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Dripping When Aroused NG</Name>
-  <Version>1.0</Version>
+  <Version>1.0.4</Version>
   <Author>Ed86, updated 2024 by stnfnk</Author>
   <Description>
   
@@ -31,7 +31,7 @@ All effects can be had at same time, effects work through clothes.
  
 Your graphic settings, enb, etc can affect visibility of effects.
  
-Mod runs checks on player character and actors within range every X seconds, If character aroused enough Mod applies hidden spell with 60 seconds duration.
+Mod runs checks on player character and actors within cell (or SPID DISTR) every X seconds, If character aroused enough Mod applies hidden spell with 60 seconds duration.
 
 Cheat?: you can set Arousal_threshold to 0 and all females will be dripping
   </Description>

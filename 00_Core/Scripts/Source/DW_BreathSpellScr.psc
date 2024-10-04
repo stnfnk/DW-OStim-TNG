@@ -17,6 +17,7 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 EndEvent
 
 Event OnUpdate()
+  akActor.ResetExpressionOverrides()
 	;sound Breath high,low,none
 	;CORE.sexlab.Log(Sound1ID+" Breath cycle start "+Sound2ID)
 	if akActor != None && (CORE.DW_ModState08.GetValue() == 1 && akActor == Game.GetPlayer()) || (CORE.DW_ModState00.GetValue() == 1 && akActor != Game.GetPlayer())
@@ -39,6 +40,7 @@ Event OnUpdate()
 		endif
 
 		if  rank >= CORE.DW_effects_heavy.GetValue()		;high arousal
+      MfgConsoleFunc.SetPhoneme(akActor,11,60)
 			if Sound1ID != 0
 				;CORE.sexlab.Log(Sound1ID+" Breath1 stop")
 				Sound.StopInstance(Sound1ID)
@@ -53,6 +55,7 @@ Event OnUpdate()
 				Sound.SetInstanceVolume(Sound2ID, strSound)
 			endif
 		elseif rank >= CORE.DW_effects_light.GetValue()		;low arousal
+      MfgConsoleFunc.SetPhoneme(akActor,11,40)
 			if Sound2ID != 0
 				;CORE.sexlab.Log(Sound2ID+" Breath2 stop")
 				Sound.StopInstance(Sound2ID)
@@ -68,6 +71,7 @@ Event OnUpdate()
 			endif
 		else												;no arousal
 			;CORE.sexlab.Log("Arousal too low, Breathing effect stopping " +Sound1ID + " | " + Sound2ID)
+      akActor.ResetExpressionOverrides()
 			akActor.RemoveSpell(CORE.DW_Breath_Spell)
 			return
 		endif
@@ -76,16 +80,19 @@ Event OnUpdate()
 			return
 		endif
 	endif
+  akActor.ResetExpressionOverrides()
 	akActor.RemoveSpell(CORE.DW_Breath_Spell)
 EndEvent
 
 Event OnPlayerLoadGame()
 	CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
 	;CORE.sexlab.Log("OnPlayerLoadGame(), Breathing effect stopping ")
+  akActor.ResetExpressionOverrides()
 	akActor.RemoveSpell(CORE.DW_Breath_Spell)
 EndEvent
 
 Event OnEffectFinish( Actor akTarget, Actor akCaster )
+  akActor.ResetExpressionOverrides()
 	if Sound1ID != 0
 		Sound.StopInstance(Sound1ID)
 		;CORE.sexlab.Log("Breath1 removed")
