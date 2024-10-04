@@ -46,55 +46,56 @@ Event OStimManager(string eventName, string _args, float numArg, Form sender)
     
     elseif (eventName=="ostim_thread_scenechanged")
       ;;;viriginity stuff
-      Actor[] actors = new actor[5]
       if CORE.Plugin_OStim
-        actors = OThread.GetActors(ostimTid)
+        Actor[] actors = OThread.GetActors(ostimTid)
         string ostimScene = OThread.GetScene(ostimTid)
         if CORE.DW_ModState13.GetValue() == 1
           int vaginal = OMetadata.FindActionForTarget(ostimScene, 1, "vaginalsex")
           Utility.Wait(0.2)
-          if GetGender(actors[0]) != 1 && actors[1].GetLeveledActorBase().GetSex() == 1 && vaginal != -1
-            if JsonUtil.FormListHas("/DW/NonVirginNPCList", "not_a_virgin", actors[1].GetLeveledActorBase()) == true
-              return
-            endif
-            if CORE.DW_VirginsList.Find(actors[1]) == -1
-              if CORE.DW_bSLStatsIgnore.GetValue() != 1 
-                ;check if actor is not a player
-                if actors[1] != Game.GetPlayer()
-                  CORE.DW_VirginsList.AddForm(actors[1])
-                  return
-                endif
+          if actors.Length > 1          
+            if GetGender(actors[0]) != 1 && actors[1].GetLeveledActorBase().GetSex() == 1 && vaginal != -1
+              if JsonUtil.FormListHas("/DW/NonVirginNPCList", "not_a_virgin", actors[1].GetLeveledActorBase()) == true
+                return
               endif
-              
-              ;player losing virginity
-              if (actors[1] == Game.GetPlayer() && CORE.DW_bPlayerIsVirgin.GetValue() == 1)
-                debug.Notification("$DW_VIRGINITYLOST")
-                CORE.DW_bPlayerIsVirgin.SetValue(0)
-                CORE.DW_PlayerVirginityLoss.SetValue(CORE.DW_PlayerVirginityLoss.GetValue() + 1)
-
-              ;player claims npc virginity
-              elseif actors[0] == Game.GetPlayer() 
-                debug.Notification("$DW_VIRGINSCLAIMED")
-                CORE.DW_VirginsClaimed.AddForm(actors[1])
-                CORE.DW_VirginsClaimedTG.AddForm(actors[1])
-                if CORE.DW_ModState15.GetValue() == 1
-                  if CORE.DW_VirginsClaimedTG.GetSize() == 1
-                    debug.Notification("$DW_FIRSTBLOOD")
-                  elseif CORE.DW_VirginsClaimedTG.GetSize() == 5
-                    debug.Notification("$DW_POWERPLAY")
-                  elseif CORE.DW_VirginsClaimedTG.GetSize() == 10
-                    debug.Notification("$DW_BRUTALITY")
-                  elseif CORE.DW_VirginsClaimedTG.GetSize() == 15
-                    debug.Notification("$DW_DOMINATION")
-                  elseif CORE.DW_VirginsClaimedTG.GetSize() == 25
-                    debug.Notification("$DW_ANNIHILATION")
+              if CORE.DW_VirginsList.Find(actors[1]) == -1
+                if CORE.DW_bSLStatsIgnore.GetValue() != 1 
+                  ;check if actor is not a player
+                  if actors[1] != Game.GetPlayer()
+                    CORE.DW_VirginsList.AddForm(actors[1])
+                    return
                   endif
                 endif
+                
+                ;player losing virginity
+                if (actors[1] == Game.GetPlayer() && CORE.DW_bPlayerIsVirgin.GetValue() == 1)
+                  debug.Notification("$DW_VIRGINITYLOST")
+                  CORE.DW_bPlayerIsVirgin.SetValue(0)
+                  CORE.DW_PlayerVirginityLoss.SetValue(CORE.DW_PlayerVirginityLoss.GetValue() + 1)
+
+                ;player claims npc virginity
+                elseif actors[0] == Game.GetPlayer() 
+                  debug.Notification("$DW_VIRGINSCLAIMED")
+                  CORE.DW_VirginsClaimed.AddForm(actors[1])
+                  CORE.DW_VirginsClaimedTG.AddForm(actors[1])
+                  if CORE.DW_ModState15.GetValue() == 1
+                    if CORE.DW_VirginsClaimedTG.GetSize() == 1
+                      debug.Notification("$DW_FIRSTBLOOD")
+                    elseif CORE.DW_VirginsClaimedTG.GetSize() == 5
+                      debug.Notification("$DW_POWERPLAY")
+                    elseif CORE.DW_VirginsClaimedTG.GetSize() == 10
+                      debug.Notification("$DW_BRUTALITY")
+                    elseif CORE.DW_VirginsClaimedTG.GetSize() == 15
+                      debug.Notification("$DW_DOMINATION")
+                    elseif CORE.DW_VirginsClaimedTG.GetSize() == 25
+                      debug.Notification("$DW_ANNIHILATION")
+                    endif
+                  endif
+                endif
+                CORE.DW_VirginsList.AddForm(actors[1])
+                CORE.DW_DrippingBlood_Spell.cast(actors[1])
+                ;CORE.DW_DrippingBloodTextures_Spell.cast(actors[0])
+                return
               endif
-              CORE.DW_VirginsList.AddForm(actors[1])
-              CORE.DW_DrippingBlood_Spell.cast(actors[1])
-              ;CORE.DW_DrippingBloodTextures_Spell.cast(actors[0])
-              return
             endif
           endif
         endif
