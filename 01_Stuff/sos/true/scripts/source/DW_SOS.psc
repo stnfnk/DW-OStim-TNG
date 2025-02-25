@@ -2,7 +2,7 @@ Scriptname DW_SOS extends Quest
 
 DW_SL property SL auto
 
-Keyword TNG_Gentlewoman
+
 
 Event OnInit()
 	DW_CORE CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
@@ -13,7 +13,7 @@ bool Function GetSOS(Actor akActor)
 	bool hasSchlong = false
 	DW_CORE CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
   if CORE.Plugin_TNG
-    if SL.GetGender(akActor) != 1 || akActor.HasKeyword(TNG_Gentlewoman)
+    if SL.GetGender(akActor) != 1
       hasSchlong = True
     endif
 	elseif CORE.Plugin_SOS
