@@ -52,8 +52,19 @@ FormList Property DW_VirginsClaimed Auto
 FormList Property DW_VirginsClaimedTG Auto
 
 event OnConfigInit()
-    ModName = "Dripping When Aroused"
-	self.RefreshStrings()
+  ModName = "Dripping When Aroused"
+  self.RefreshStrings()
+endEvent
+
+event OnConfigClose()
+  if ForceStart
+    CORE.Startup()
+    DW_bSquirtChanceArousal.SetValue(1)
+    Quest.GetQuest("DW_Dripping_Status").stop()
+    Quest.GetQuest("DW_Dripping_Status").start()
+    Debug.Trace("DW - Forced Restart from MCM")
+    ForceStart = false
+  endif
 endEvent
 
 Function RefreshStrings()
@@ -130,7 +141,7 @@ function Page_Settings()
 			AddEmptyOption()
 
 	SetCursorPosition(1)
-		AddToggleOptionST("Force_Start_Toggle", "$DW_Force_Start", ForceStart)
+		AddToggleOptionST("Force_Start_Toggle", "$DW_FORCE_RESTART", ForceStart)
 		AddEmptyOption()
 		AddHeaderOption("$DW_PSE")
 		Actor PlayerRef = Game.GetPlayer()
@@ -579,22 +590,12 @@ endState
 
 state Force_Start_Toggle
 	event OnSelectST()
-		if ForceStart
-			!ForceStart
-		else
-			ForceStart
-			CORE.Startup()
-			DW_bSquirtChanceArousal.SetValue(1)
-			Quest.GetQuest("DW_Dripping_Status").stop()
-			Quest.GetQuest("DW_Dripping_Status").start()
-		endif
-		
-		ForceStart = false
+		ForceStart = !ForceStart
 		SetToggleOptionValueST(ForceStart)
 	endEvent
 	
 	event OnHighlightST()
-		SetInfoText("$DW_Force_Start_DESC")
+		SetInfoText("$DW_FORCE_RESTART_DESC")
 	endEvent
 endState
 

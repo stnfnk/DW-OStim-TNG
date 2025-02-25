@@ -3,12 +3,13 @@ Scriptname DW_SL extends quest
 DW_CORE property CORE auto
 
 Keyword TNG_Gentlewoman
+Keyword TNG_XL
 
 
 
 int Function GetGender(Actor akActor)
   if CORE.Plugin_TNG
-    TNG_Gentlewoman = Game.GetFormFromFile(0x03BFF8, "TheNewGentleman.esp") as Keyword
+    TNG_Gentlewoman = Game.GetFormFromFile(0xFF8, "TheNewGentleman.esp") as Keyword
     if !akActor.GetActorBase().GetSex() == 0 && !akActor.HasKeyword(TNG_Gentlewoman)
       return 1
     else
@@ -25,6 +26,37 @@ int Function GetGender(Actor akActor)
 	endif
 EndFunction
 
+
+
+string Function GetActorName(actor akActor)
+  if akActor == Game.GetPlayer()
+    return akActor.GetActorBase().GetName()
+  else
+    return akActor.GetDisplayName()
+  EndIf
+EndFunction
+
+
+
+Function MinAI_RegisterEvent(string eventLine, string eventType)
+ int handle = ModEvent.Create("MinAI_RegisterEvent")
+  if (handle)
+    ModEvent.PushString(handle, eventLine)
+    ModEvent.PushString(handle, eventType)
+    ModEvent.Send(handle)
+  endIf
+EndFunction
+
+
+Function MinAI_RequestResponse(string eventLine, string eventType, string targetName)
+  int handle = ModEvent.Create("MinAI_RequestResponse")
+    if (handle)
+      ModEvent.PushString(handle, eventLine)
+      ModEvent.PushString(handle, eventType)
+      ModEvent.PushString(handle, targetName)
+      ModEvent.Send(handle)
+    endIf
+EndFunction
 
 
 Event OStimManager(string eventName, string _args, float numArg, Form sender)
@@ -94,6 +126,9 @@ Event OStimManager(string eventName, string _args, float numArg, Form sender)
                 CORE.DW_VirginsList.AddForm(actors[1])
                 CORE.DW_DrippingBlood_Spell.cast(actors[1])
                 ;CORE.DW_DrippingBloodTextures_Spell.cast(actors[0])
+                if CORE.Plugin_MinAI
+                  MinAI_RequestResponse(GetActorName(actors[1]) + " just lost her virginity to " + GetActorName(actors[0]) + "!", "chatnf_sex", "everyone")
+                endif
                 return
               endif
             endif
@@ -161,6 +196,9 @@ Function Orgasm(Actor akActor, String _args)
       endif
       if Utility.RandomInt(0, 100) <= Chance
         CORE.DW_DrippingSquirt_Spell.cast( akActor )
+        if CORE.Plugin_MinAI
+          MinAI_RegisterEvent(GetActorName(akActor) + " climaxed so hard she squirted!", "info_sexscene")
+        endif
       endif
     endif
   endif
@@ -170,6 +208,9 @@ Function Orgasm(Actor akActor, String _args)
     if (CORE.DW_ModState16.GetValue() == 1 && akActor == Game.Getplayer())\
     || (CORE.DW_ModState17.GetValue() == 1 && akActor != Game.Getplayer())
       CORE.DW_Milkleak_Spell.cast( akActor )
+      if CORE.Plugin_MinAI
+          MinAI_RegisterEvent("Arousal and stimulation are causing milk to leak from " + GetActorName(akActor) + "'s nipples", "info_sexscene")
+        endif
     endif
   endif
   
@@ -183,37 +224,57 @@ Function Orgasm(Actor akActor, String _args)
       string ostimScene = OThread.GetScene(ostimTid)
       int vaginal = OMetadata.FindActionForTarget(ostimScene, 1, "vaginalsex")
       int anal = OMetadata.FindActionForTarget(ostimScene, 1, "analsex")
-      Utility.Wait(0.2)
+      Utility.Wait(0.3)
       if GetGender(actors[0]) == 0 && (vaginal != -1 || anal != -1) 
         if actors.Length > 1
           if akActor != actors[0]
             if actors[0].GetLeveledActorBase().GetSex() != 1 || actors[0].HasKeyword(TNG_Gentlewoman)
-              Utility.Wait(1.0)
+              TNG_XL = Game.GetFormFromFile(0xFE5, "TheNewGentleman.esp") as Keyword
+              Utility.Wait(3.0)
               CORE.DW_DrippingCum_Spell.cast(actors[1])
+              if CORE.Plugin_MinAI
+                MinAI_RegisterEvent(GetActorName(actors[1]) + " is leaking " + GetActorName(actors[0]) + "'s cum down their thighs", "info_sexscene")
+                if CORE.DW_ModState13.GetValue() == 1 && CORE.Plugin_TNG && actors[0].HasKeyword(TNG_XL)                
+                  CORE.DW_DrippingBlood_Spell.cast(actors[1])
+                  if CORE.Plugin_MinAI
+                    MinAI_RegisterEvent(GetActorName(actors[1]) + " is bleeding from being ripped open by " + GetActorName(actors[0]) + "'s enormous cock", "info_sexscene")
+                  endif
+                endif
+              endif
             endif
           endif
         endif
       endif
 
-      elseif CORE.Plugin_SL
-        Quest SexLabQuest = Quest.GetQuest("SexLabQuestFramework")
-        if (SexLabQuest)
-          Actor[] actors = new actor[5]
-          SexLabFramework SexLab = SexLabQuest as SexLabFramework
-          ;Sexlab.Log("DW SL Orgasm()")
-          actors = SexLab.HookActors(_args)
-          sslBaseAnimation animation = SexLab.HookAnimation(_args)
-          if (animation.HasTag("Anal") || animation.HasTag("Vaginal")) && actors.Length > 1
-            if akActor != actors[0]
-              If CORE.SOS.GetSOS(actors[1]) == true || actors[1].GetLeveledActorBase().GetSex() != 1
-                Utility.Wait(1.0)
-                CORE.DW_DrippingCum_Spell.cast( actors[0] )
+    elseif CORE.Plugin_SL
+      Quest SexLabQuest = Quest.GetQuest("SexLabQuestFramework")
+      if (SexLabQuest)
+        Actor[] actors = new actor[5]
+        SexLabFramework SexLab = SexLabQuest as SexLabFramework
+        ;Sexlab.Log("DW SL Orgasm()")
+        actors = SexLab.HookActors(_args)
+        sslBaseAnimation animation = SexLab.HookAnimation(_args)
+        if (animation.HasTag("Anal") || animation.HasTag("Vaginal")) && actors.Length > 1
+          if akActor != actors[0]
+            if CORE.SOS.GetSOS(actors[1]) == true || actors[1].GetLeveledActorBase().GetSex() != 1
+              TNG_XL = Game.GetFormFromFile(0xFE5, "TheNewGentleman.esp") as Keyword                
+              Utility.Wait(3.0)
+              CORE.DW_DrippingCum_Spell.cast( actors[0] )
+              if CORE.Plugin_MinAI
+                MinAI_RegisterEvent(GetActorName(actors[0]) + " is leaking " + GetActorName(actors[1]) + "'s cum down their thighs", "info_sexscene")
+                if CORE.DW_ModState13.GetValue() == 1 && CORE.Plugin_TNG && actors[1].HasKeyword(TNG_XL)                  
+                  CORE.DW_DrippingBlood_Spell.cast(actors[0])
+                  if CORE.Plugin_MinAI
+                    MinAI_RegisterEvent(GetActorName(actors[0]) + " is bleeding from being ripped open by " + GetActorName(actors[1]) + "'s enormous cock", "info_sexscene")
+                  endif
+                endif
               endif
             endif
           endif
         endif
       endif
     endif
+  endif
 
   ;disabled since idk how to align ejaculation effect with penis
   ;idx = 0
@@ -290,6 +351,9 @@ Event OnSexLabStageChange(String _eventName, String _args, Float _argc, Form _se
 							CORE.DW_VirginsList.AddForm(actors[0])
 							CORE.DW_DrippingBlood_Spell.cast(actors[0])
 							;CORE.DW_DrippingBloodTextures_Spell.cast(actors[0])
+              if CORE.Plugin_MinAI
+                MinAI_RequestResponse(GetActorName(actors[0]) + " just lost her virginity to " + GetActorName(actors[1]) + "!", "chatnf_sex", "everyone")
+              endif
 							return
 						endif
 					endif
