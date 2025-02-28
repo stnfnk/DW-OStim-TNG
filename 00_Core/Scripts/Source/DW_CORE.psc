@@ -77,6 +77,7 @@ Bool Property Plugin_ZaZ = false auto
 Bool Property Plugin_SOS = false auto
 Bool Property Plugin_TNG = false auto
 Bool Property Plugin_MinAI = false auto
+Bool Property Plugin_Appr2 = false auto
 
 ;OStim
 Bool Property Plugin_OStim = false auto
@@ -93,6 +94,7 @@ Function Startup()
 	Plugin_SOS = (Game.GetModbyName("Schlongs of Skyrim.esp") != 255)
   Plugin_TNG = (Game.GetModbyName("TheNewGentleman.esp") != 255)
   Plugin_MinAI = (Game.GetModbyName("MinAI.esp") != 255)
+  Plugin_Appr2 = (Game.GetModbyName("Apropos2.esp") != 255)
   
   Plugin_OStim = (Game.GetModbyName("OStim.esp") != 255)
 	

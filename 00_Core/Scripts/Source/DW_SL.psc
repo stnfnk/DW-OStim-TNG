@@ -2,9 +2,10 @@ Scriptname DW_SL extends quest
 
 DW_CORE property CORE auto
 
+Quest ActorsQuest
+
 Keyword TNG_Gentlewoman
 Keyword TNG_XL
-
 
 
 int Function GetGender(Actor akActor)
@@ -62,6 +63,9 @@ EndFunction
 Event OStimManager(string eventName, string _args, float numArg, Form sender)
   if CORE.Plugin_OStim
     int ostimTid = numArg as int
+    if (CORE.Plugin_Appr2 && !ActorsQuest)
+			ActorsQuest = Game.GetFormFromFile(0x02902C, "Apropos2.esp") as Quest
+		EndIf
 
     if (eventName=="ostim_thread_start")
       Actor akActor = Game.GetPlayer()
@@ -88,6 +92,9 @@ Event OStimManager(string eventName, string _args, float numArg, Form sender)
             if GetGender(actors[0]) != 1 && actors[1].GetLeveledActorBase().GetSex() == 1 && vaginal != -1
               if JsonUtil.FormListHas("/DW/NonVirginNPCList", "not_a_virgin", actors[1].GetLeveledActorBase()) == true
                 return
+              endif
+              if (ActorsQuest && DW_Appr2.GetVaginalWearState0to10(actors[1], ActorsQuest) > 6)
+                simulateDamagedVagina(actors[1])
               endif
               if CORE.DW_VirginsList.Find(actors[1]) == -1
                 if CORE.DW_bSLStatsIgnore.GetValue() != 1 
@@ -286,11 +293,25 @@ Function Orgasm(Actor akActor, String _args)
   ;EndWhile
 EndFunction
 
+Function simulateDamagedVagina(Actor akActor)
+	if akActor != None 
+		if CORE.DW_VirginsList.HasForm(akActor)
+			CORE.DW_VirginsList.RemoveAddedForm(akActor)
+			debug.Trace(akActor.GetLeveledActorBase().GetName() +" vagina damaged")
+		endif
+		if akActor == Game.GetPlayer()
+			debug.Trace("PC vagina damaged")
+		endif
+	endif
+EndFunction
 
 
 Event OnSexLabStageChange(String _eventName, String _args, Float _argc, Form _sender)
 	if CORE.Plugin_SL
 		Quest SexLabQuest = Quest.GetQuest("SexLabQuestFramework")
+    If (CORE.Plugin_Appr2 && !ActorsQuest)
+			ActorsQuest = Game.GetFormFromFile(0x02902C, "Apropos2.esp") as Quest
+		EndIf
 		if (SexLabQuest)
 			SexLabFramework SexLab = SexLabQuest as SexLabFramework
 			;Sexlab.Log("DW OnSexLabStageChange()")
@@ -308,6 +329,9 @@ Event OnSexLabStageChange(String _eventName, String _args, Float _argc, Form _se
 					If ((CORE.SOS.GetSOS(actors[1]) == true || SexLab.Config.UseStrapons == true) || actors[1].GetLeveledActorBase().GetSex() != 1) && actors[0].GetLeveledActorBase().GetSex() == 1
 						If JsonUtil.FormListHas("/DW/NonVirginNPCList", "not_a_virgin", actors[0].GetLeveledActorBase()) == true
 							return
+						endif
+            if (ActorsQuest && DW_Appr2.GetVaginalWearState0to10(actors[0], ActorsQuest) > 6)
+							simulateDamagedVagina(actors[0])
 						endif
 						If CORE.DW_VirginsList.Find(actors[0]) == -1
 							;add non virgin npc to a list
