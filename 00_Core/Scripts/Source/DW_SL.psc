@@ -132,7 +132,9 @@ Event OStimManager(string eventName, string _args, float numArg, Form sender)
                 endif
                 CORE.DW_VirginsList.AddForm(actors[1])
                 CORE.DW_DrippingBlood_Spell.cast(actors[1])
-                ;CORE.DW_DrippingBloodTextures_Spell.cast(actors[0])
+                if (ActorsQuest && DW_Appr2.GetVaginalWearState0to10(actors[1], ActorsQuest) > 6)
+                  simulateDamagedVagina(actors[1])
+                endif
                 if CORE.Plugin_MinAI
                   MinAI_RequestResponse(GetActorName(actors[1]) + " just lost her virginity to " + GetActorName(actors[0]) + "!", "chatnf_sex", "everyone")
                 endif
@@ -189,7 +191,9 @@ Function Orgasm(Actor akActor, String _args)
   if !CORE.Plugin_SL && !CORE.Plugin_OStim
     return
   endif
-
+  If (CORE.Plugin_Appr2 && !ActorsQuest)
+    ActorsQuest = Game.GetFormFromFile(0x02902C, "Apropos2.esp") as Quest
+  EndIf
   ;Squirt for females
   if CORE.DW_ModState03.GetValue() == 1
     if (CORE.DW_bUseSLGenderForSquirt.GetValue() == 1\
@@ -225,24 +229,29 @@ Function Orgasm(Actor akActor, String _args)
   ;there's fault in logic with group sex, but w/e
   if CORE.DW_ModState02.GetValue() == 1
 
-    if CORE.Plugin_OStim
-      int ostimTid = OActor.GetSceneID(akActor)
-      Actor[] actors = OThread.GetActors(ostimTid)
-      string ostimScene = OThread.GetScene(ostimTid)
-      int vaginal = OMetadata.FindActionForTarget(ostimScene, 1, "vaginalsex")
-      int anal = OMetadata.FindActionForTarget(ostimScene, 1, "analsex")
-      Utility.Wait(0.3)
-      if GetGender(actors[0]) == 0 && (vaginal != -1 || anal != -1) 
-        if actors.Length > 1
-          if akActor != actors[0]
-            if actors[0].GetLeveledActorBase().GetSex() != 1 || actors[0].HasKeyword(TNG_Gentlewoman)
-              TNG_XL = Game.GetFormFromFile(0xFE5, "TheNewGentleman.esp") as Keyword
-              Utility.Wait(3.0)
-              CORE.DW_DrippingCum_Spell.cast(actors[1])
-              if CORE.Plugin_MinAI
-                MinAI_RegisterEvent(GetActorName(actors[1]) + " is leaking " + GetActorName(actors[0]) + "'s cum down their thighs", "info_sexscene")
-                if CORE.DW_ModState13.GetValue() == 1 && CORE.Plugin_TNG && actors[0].HasKeyword(TNG_XL)                
+  if CORE.Plugin_OStim
+    int ostimTid = OActor.GetSceneID(akActor)
+    Actor[] actors = OThread.GetActors(ostimTid)
+    string ostimScene = OThread.GetScene(ostimTid)
+    int vaginal = OMetadata.FindActionForTarget(ostimScene, 1, "vaginalsex")
+    int anal = OMetadata.FindActionForTarget(ostimScene, 1, "analsex")
+    Utility.Wait(0.3)
+    if GetGender(actors[0]) == 0 && (vaginal != -1 || anal != -1) 
+      if actors.Length > 1
+        if akActor != actors[0]
+          if actors[0].GetLeveledActorBase().GetSex() != 1 || actors[0].HasKeyword(TNG_Gentlewoman)
+            Utility.Wait(3.0)
+            CORE.DW_DrippingCum_Spell.cast(actors[1])
+            if CORE.Plugin_MinAI
+              MinAI_RegisterEvent(GetActorName(actors[1]) + " is leaking " + GetActorName(actors[0]) + "'s cum down their thighs", "info_sexscene")
+              if CORE.DW_ModState13.GetValue() == 1 && CORE.Plugin_TNG
+                TNG_XL = Game.GetFormFromFile(0xFE5, "TheNewGentleman.esp") as Keyword
+                int TNG_Size = TNG_PapyrusUtil.GetActorSize(actors[0])
+                if actors[0].HasKeyword(TNG_XL) || TNG_Size==4
                   CORE.DW_DrippingBlood_Spell.cast(actors[1])
+                  if (ActorsQuest && DW_Appr2.GetVaginalWearState0to10(actors[1], ActorsQuest) > 6)
+                    simulateDamagedVagina(actors[1])
+                  endif
                   if CORE.Plugin_MinAI
                     MinAI_RegisterEvent(GetActorName(actors[1]) + " is bleeding from being ripped open by " + GetActorName(actors[0]) + "'s enormous cock", "info_sexscene")
                   endif
@@ -252,6 +261,7 @@ Function Orgasm(Actor akActor, String _args)
           endif
         endif
       endif
+    endif
 
     elseif CORE.Plugin_SL
       Quest SexLabQuest = Quest.GetQuest("SexLabQuestFramework")
@@ -264,15 +274,21 @@ Function Orgasm(Actor akActor, String _args)
         if (animation.HasTag("Anal") || animation.HasTag("Vaginal")) && actors.Length > 1
           if akActor != actors[0]
             if CORE.SOS.GetSOS(actors[1]) == true || actors[1].GetLeveledActorBase().GetSex() != 1
-              TNG_XL = Game.GetFormFromFile(0xFE5, "TheNewGentleman.esp") as Keyword                
               Utility.Wait(3.0)
               CORE.DW_DrippingCum_Spell.cast( actors[0] )
               if CORE.Plugin_MinAI
                 MinAI_RegisterEvent(GetActorName(actors[0]) + " is leaking " + GetActorName(actors[1]) + "'s cum down their thighs", "info_sexscene")
-                if CORE.DW_ModState13.GetValue() == 1 && CORE.Plugin_TNG && actors[1].HasKeyword(TNG_XL)                  
-                  CORE.DW_DrippingBlood_Spell.cast(actors[0])
-                  if CORE.Plugin_MinAI
-                    MinAI_RegisterEvent(GetActorName(actors[0]) + " is bleeding from being ripped open by " + GetActorName(actors[1]) + "'s enormous cock", "info_sexscene")
+                if CORE.DW_ModState13.GetValue() == 1 && CORE.Plugin_TNG
+                  TNG_XL = Game.GetFormFromFile(0xFE5, "TheNewGentleman.esp") as Keyword
+                  int TNG_Size = TNG_PapyrusUtil.GetActorSize(actors[1])
+                  if actors[1].HasKeyword(TNG_XL) || TNG_Size==4          
+                    CORE.DW_DrippingBlood_Spell.cast(actors[0])
+                    if (ActorsQuest && DW_Appr2.GetVaginalWearState0to10(actors[0], ActorsQuest) > 6)
+                      simulateDamagedVagina(actors[0])
+                    endif
+                    if CORE.Plugin_MinAI
+                      MinAI_RegisterEvent(GetActorName(actors[0]) + " is bleeding from being ripped open by " + GetActorName(actors[1]) + "'s enormous cock", "info_sexscene")
+                    endif
                   endif
                 endif
               endif
@@ -292,6 +308,7 @@ Function Orgasm(Actor akActor, String _args)
   ;	idx += 1
   ;EndWhile
 EndFunction
+
 
 Function simulateDamagedVagina(Actor akActor)
 	if akActor != None 

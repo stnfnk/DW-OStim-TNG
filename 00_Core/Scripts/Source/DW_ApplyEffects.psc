@@ -9,11 +9,11 @@ DW_zbf zbf
 
 
 Function OnEffectStart(Actor aNPC, Actor akCaster)
-  CORE =Game.GetFormFromFile(0xA862, "DW.esp") as DW_CORE
-  SLA = Game.GetFormFromFile(0xA87B, "DW.esp") as DW_SLA
-  SL = Game.GetFormFromFile(0xA8B1, "DW.esp") as DW_SL
-  DDi = Game.GetFormFromFile(0xA879, "DW.esp") as DW_DDi
-  zbf = Game.GetFormFromFile(0xA87A, "DW.esp") as DW_zbf
+  CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
+  SLA = Game.GetFormFromFile(0x87B, "DW.esp") as DW_SLA
+  SL = Game.GetFormFromFile(0x8B1, "DW.esp") as DW_SL
+  DDi = Game.GetFormFromFile(0x879, "DW.esp") as DW_DDi
+  zbf = Game.GetFormFromFile(0x87A, "DW.esp") as DW_zbf
   if (!aNPC || !CORE)
     Debug.Trace("[DW] Skipping OnEffectStart, not ready")
     return
