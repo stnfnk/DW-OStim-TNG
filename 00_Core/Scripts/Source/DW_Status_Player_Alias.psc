@@ -4,12 +4,12 @@ Scriptname DW_Status_Player_Alias extends ReferenceAlias
 
 
 Event OnPlayerLoadGame()
-	Quest status_qst = Game.GetFormFromFile(0xA889, "DW.esp") as Quest
-	status_qst.Stop()
-	status_qst.Start()
-	
-	;Quest.GetQuest("DW_Dripping_Status").stop()
-	;Quest.GetQuest("DW_Dripping_Status").reset()	;reset interrupts script, so we don't use it here
-	;Quest.GetQuest("DW_Dripping_Status").start()
+  Quest status_qst = Game.GetFormFromFile(0xA889, "DW.esp") as Quest
+  status_qst.Stop()
+  status_qst.Start()
+  
+  ;Quest.GetQuest("DW_Dripping_Status").stop()
+  ;Quest.GetQuest("DW_Dripping_Status").reset() ;reset interrupts script, so we don't use it here
+  ;Quest.GetQuest("DW_Dripping_Status").start()
 
 EndEvent

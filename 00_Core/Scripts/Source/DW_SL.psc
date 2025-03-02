@@ -16,15 +16,15 @@ int Function GetGender(Actor akActor)
     else
       return 0
     endif
-	elseif CORE.Plugin_SL
-		Quest SexLabQuest = Quest.GetQuest("SexLabQuestFramework")
-		if (SexLabQuest)
-			SexLabFramework SexLab = SexLabQuest as SexLabFramework
-			Return SexLab.GetGender( akActor )
+  elseif CORE.Plugin_SL
+    Quest SexLabQuest = Quest.GetQuest("SexLabQuestFramework")
+    if (SexLabQuest)
+      SexLabFramework SexLab = SexLabQuest as SexLabFramework
+      Return SexLab.GetGender( akActor )
     endif
   else
-		Return akActor.GetLeveledActorBase().GetSex()
-	endif
+    Return akActor.GetLeveledActorBase().GetSex()
+  endif
 EndFunction
 
 
@@ -64,17 +64,17 @@ Event OStimManager(string eventName, string _args, float numArg, Form sender)
   if CORE.Plugin_OStim
     int ostimTid = numArg as int
     if (CORE.Plugin_Appr2 && !ActorsQuest)
-			ActorsQuest = Game.GetFormFromFile(0x02902C, "Apropos2.esp") as Quest
-		EndIf
+      ActorsQuest = Game.GetFormFromFile(0x02902C, "Apropos2.esp") as Quest
+    EndIf
 
     if (eventName=="ostim_thread_start")
       Actor akActor = Game.GetPlayer()
       if OActor.IsInOstim(akActor)
         CORE.DW_bAnimating.SetValue(1)
-        if CORE.DW_ModState09.GetValue() == 1	;remove visuals
+        if CORE.DW_ModState09.GetValue() == 1 ;remove visuals
           akActor.RemoveSpell(CORE.DW_Visuals_Spell)
         endif
-        if CORE.DW_ModState10.GetValue() == 1	;remove sound
+        if CORE.DW_ModState10.GetValue() == 1 ;remove sound
           akActor.RemoveSpell(CORE.DW_Heart_Spell)
           akActor.RemoveSpell(CORE.DW_Breath_Spell)
         endif
@@ -163,27 +163,27 @@ EndEvent
 
 ;Catch sexlab orgasm
 Event OnSexLabOrgasm(String _eventName, String _args, Float _argc, Form _sender)
-	if CORE.Plugin_SL
-		Quest SexLabQuest = Quest.GetQuest("SexLabQuestFramework")
-		if (SexLabQuest)
-			SexLabFramework SexLab = SexLabQuest as SexLabFramework
-			Actor[] actors = SexLab.HookActors(_args)
-			int idx
+  if CORE.Plugin_SL
+    Quest SexLabQuest = Quest.GetQuest("SexLabQuestFramework")
+    if (SexLabQuest)
+      SexLabFramework SexLab = SexLabQuest as SexLabFramework
+      Actor[] actors = SexLab.HookActors(_args)
+      int idx
 
-			While idx < actors.Length
-				Orgasm(actors[idx], _args)
-				idx += 1
-			EndWhile
-		endif
-	endif
+      While idx < actors.Length
+        Orgasm(actors[idx], _args)
+        idx += 1
+      EndWhile
+    endif
+  endif
 EndEvent
 
 ;Catch sexlab SLSO orgasm
 Event OnSexLabOrgasmSeparate(Form ActorRef, Int Thread)
-	actor akActor = ActorRef as actor
-	string _args =  Thread as string
-	
-	Orgasm(akActor, _args)
+  actor akActor = ActorRef as actor
+  string _args =  Thread as string
+  
+  Orgasm(akActor, _args)
 EndEvent
 
 ;process orgasm
@@ -302,140 +302,140 @@ Function Orgasm(Actor akActor, String _args)
   ;disabled since idk how to align ejaculation effect with penis
   ;idx = 0
   ;While idx < actors.Length
-  ;	if CORE.SOS.GetSOS(akActor) == true
-  ;		CORE.DW_DrippingSOSCum_Spell.cast( akActor )
-  ;	endif
-  ;	idx += 1
+  ; if CORE.SOS.GetSOS(akActor) == true
+  ;   CORE.DW_DrippingSOSCum_Spell.cast( akActor )
+  ; endif
+  ; idx += 1
   ;EndWhile
 EndFunction
 
 
 Function simulateDamagedVagina(Actor akActor)
-	if akActor != None 
-		if CORE.DW_VirginsList.HasForm(akActor)
-			CORE.DW_VirginsList.RemoveAddedForm(akActor)
-			debug.Trace(akActor.GetLeveledActorBase().GetName() +" vagina damaged")
-		endif
-		if akActor == Game.GetPlayer()
-			debug.Trace("PC vagina damaged")
-		endif
-	endif
+  if akActor != None 
+    if CORE.DW_VirginsList.HasForm(akActor)
+      CORE.DW_VirginsList.RemoveAddedForm(akActor)
+      debug.Trace(akActor.GetLeveledActorBase().GetName() +" vagina damaged")
+    endif
+    if akActor == Game.GetPlayer()
+      debug.Trace("PC vagina damaged")
+    endif
+  endif
 EndFunction
 
 
 Event OnSexLabStageChange(String _eventName, String _args, Float _argc, Form _sender)
-	if CORE.Plugin_SL
-		Quest SexLabQuest = Quest.GetQuest("SexLabQuestFramework")
+  if CORE.Plugin_SL
+    Quest SexLabQuest = Quest.GetQuest("SexLabQuestFramework")
     If (CORE.Plugin_Appr2 && !ActorsQuest)
-			ActorsQuest = Game.GetFormFromFile(0x02902C, "Apropos2.esp") as Quest
-		EndIf
-		if (SexLabQuest)
-			SexLabFramework SexLab = SexLabQuest as SexLabFramework
-			;Sexlab.Log("DW OnSexLabStageChange()")
-			
-			Actor[] actors = SexLab.HookActors(_args)
-			int idx = 0
-			sslBaseAnimation animation = SexLab.HookAnimation(_args)
-			
-			;SexLabUtil.PrintConsole("vaginal?" + animation.HasTag("Vaginal"))
-			;SexLabUtil.PrintConsole("has sos?" + CORE.SOS.GetSOS(actors[1]))
-			;SexLabUtil.PrintConsole("name + gender" + actors[0].GetLeveledActorBase().GetName() + actors[0].GetLeveledActorBase().GetSex() + " , " + actors[1].GetLeveledActorBase().GetName() + actors[1].GetLeveledActorBase().GetSex())
-			if CORE.DW_ModState13.GetValue() == 1
-				if animation.HasTag("Vaginal") && actors.Length > 1
-					;check if dom actor(1) has penetrator and sub actor(0) has something to penetrate
-					If ((CORE.SOS.GetSOS(actors[1]) == true || SexLab.Config.UseStrapons == true) || actors[1].GetLeveledActorBase().GetSex() != 1) && actors[0].GetLeveledActorBase().GetSex() == 1
-						If JsonUtil.FormListHas("/DW/NonVirginNPCList", "not_a_virgin", actors[0].GetLeveledActorBase()) == true
-							return
-						endif
+      ActorsQuest = Game.GetFormFromFile(0x02902C, "Apropos2.esp") as Quest
+    EndIf
+    if (SexLabQuest)
+      SexLabFramework SexLab = SexLabQuest as SexLabFramework
+      ;Sexlab.Log("DW OnSexLabStageChange()")
+      
+      Actor[] actors = SexLab.HookActors(_args)
+      int idx = 0
+      sslBaseAnimation animation = SexLab.HookAnimation(_args)
+      
+      ;SexLabUtil.PrintConsole("vaginal?" + animation.HasTag("Vaginal"))
+      ;SexLabUtil.PrintConsole("has sos?" + CORE.SOS.GetSOS(actors[1]))
+      ;SexLabUtil.PrintConsole("name + gender" + actors[0].GetLeveledActorBase().GetName() + actors[0].GetLeveledActorBase().GetSex() + " , " + actors[1].GetLeveledActorBase().GetName() + actors[1].GetLeveledActorBase().GetSex())
+      if CORE.DW_ModState13.GetValue() == 1
+        if animation.HasTag("Vaginal") && actors.Length > 1
+          ;check if dom actor(1) has penetrator and sub actor(0) has something to penetrate
+          If ((CORE.SOS.GetSOS(actors[1]) == true || SexLab.Config.UseStrapons == true) || actors[1].GetLeveledActorBase().GetSex() != 1) && actors[0].GetLeveledActorBase().GetSex() == 1
+            If JsonUtil.FormListHas("/DW/NonVirginNPCList", "not_a_virgin", actors[0].GetLeveledActorBase()) == true
+              return
+            endif
             if (ActorsQuest && DW_Appr2.GetVaginalWearState0to10(actors[0], ActorsQuest) > 6)
-							simulateDamagedVagina(actors[0])
-						endif
-						If CORE.DW_VirginsList.Find(actors[0]) == -1
-							;add non virgin npc to a list
-							;check if actor sl virgin
-							If SexLab.HadSex(actors[0]) && (SexLab.GetSkillLevel(actors[0], "Vaginal") > 0)
-								;check if we ignore sl stats
-								If CORE.DW_bSLStatsIgnore.GetValue() != 1 
-									;check if actor is  not a player
-									If actors[0] != Game.GetPlayer()
-										CORE.DW_VirginsList.AddForm(actors[0])
-										return
-									endif
-								endif
-							endif
-							
-							;player loosing virginity
-							If (actors[0] == Game.GetPlayer() && CORE.DW_bPlayerIsVirgin.GetValue() == 1)
-								debug.Notification("$DW_VIRGINITYLOST")
-								CORE.DW_bPlayerIsVirgin.SetValue(0)
-								CORE.DW_PlayerVirginityLoss.SetValue(CORE.DW_PlayerVirginityLoss.GetValue() + 1)
+              simulateDamagedVagina(actors[0])
+            endif
+            If CORE.DW_VirginsList.Find(actors[0]) == -1
+              ;add non virgin npc to a list
+              ;check if actor sl virgin
+              If SexLab.HadSex(actors[0]) && (SexLab.GetSkillLevel(actors[0], "Vaginal") > 0)
+                ;check if we ignore sl stats
+                If CORE.DW_bSLStatsIgnore.GetValue() != 1 
+                  ;check if actor is  not a player
+                  If actors[0] != Game.GetPlayer()
+                    CORE.DW_VirginsList.AddForm(actors[0])
+                    return
+                  endif
+                endif
+              endif
+              
+              ;player loosing virginity
+              If (actors[0] == Game.GetPlayer() && CORE.DW_bPlayerIsVirgin.GetValue() == 1)
+                debug.Notification("$DW_VIRGINITYLOST")
+                CORE.DW_bPlayerIsVirgin.SetValue(0)
+                CORE.DW_PlayerVirginityLoss.SetValue(CORE.DW_PlayerVirginityLoss.GetValue() + 1)
 
-								;player claims npc virginity
-							elseif actors[1] == Game.GetPlayer() 
-								debug.Notification("$DW_VIRGINSCLAIMED")
-								CORE.DW_VirginsClaimed.AddForm(actors[0])
-								CORE.DW_VirginsClaimedTG.AddForm(actors[0])
-								If CORE.DW_ModState15.GetValue() == 1
-									If CORE.DW_VirginsClaimedTG.GetSize() == 1
-										debug.Notification("$DW_FIRSTBLOOD")
-									elseif CORE.DW_VirginsClaimedTG.GetSize() == 5
-										debug.Notification("$DW_POWERPLAY")
-									elseif CORE.DW_VirginsClaimedTG.GetSize() == 10
-										debug.Notification("$DW_BRUTALITY")
-									elseif CORE.DW_VirginsClaimedTG.GetSize() == 15
-										debug.Notification("$DW_DOMINATION")
-									elseif CORE.DW_VirginsClaimedTG.GetSize() == 25
-										debug.Notification("$DW_ANNIHILATION")
-									endif
-								endif
-							endif
-							CORE.DW_VirginsList.AddForm(actors[0])
-							CORE.DW_DrippingBlood_Spell.cast(actors[0])
-							;CORE.DW_DrippingBloodTextures_Spell.cast(actors[0])
+                ;player claims npc virginity
+              elseif actors[1] == Game.GetPlayer() 
+                debug.Notification("$DW_VIRGINSCLAIMED")
+                CORE.DW_VirginsClaimed.AddForm(actors[0])
+                CORE.DW_VirginsClaimedTG.AddForm(actors[0])
+                If CORE.DW_ModState15.GetValue() == 1
+                  If CORE.DW_VirginsClaimedTG.GetSize() == 1
+                    debug.Notification("$DW_FIRSTBLOOD")
+                  elseif CORE.DW_VirginsClaimedTG.GetSize() == 5
+                    debug.Notification("$DW_POWERPLAY")
+                  elseif CORE.DW_VirginsClaimedTG.GetSize() == 10
+                    debug.Notification("$DW_BRUTALITY")
+                  elseif CORE.DW_VirginsClaimedTG.GetSize() == 15
+                    debug.Notification("$DW_DOMINATION")
+                  elseif CORE.DW_VirginsClaimedTG.GetSize() == 25
+                    debug.Notification("$DW_ANNIHILATION")
+                  endif
+                endif
+              endif
+              CORE.DW_VirginsList.AddForm(actors[0])
+              CORE.DW_DrippingBlood_Spell.cast(actors[0])
+              ;CORE.DW_DrippingBloodTextures_Spell.cast(actors[0])
               if CORE.Plugin_MinAI
                 MinAI_RequestResponse(GetActorName(actors[0]) + " just lost her virginity to " + GetActorName(actors[1]) + "!", "chatnf_sex", "everyone")
               endif
-							return
-						endif
-					endif
-				endif
-			endif
-		endif
-	endif
+              return
+            endif
+          endif
+        endif
+      endif
+    endif
+  endif
 EndEvent
 
 Event OnAnimationStart(string eventName, string strArg, float numArg, Form sender)
-	if CORE.Plugin_SL
-		Quest SexLabQuest = Quest.GetQuest("SexLabQuestFramework")
-		if (SexLabQuest)
-			SexLabFramework SexLab = SexLabQuest as SexLabFramework
-			
-			sslThreadController thread = SexLab.GetController(strArg as int)
-			if thread.HasPlayer == true
-				Actor akActor = Game.GetPlayer()
-				CORE.DW_bAnimating.SetValue(1)
-				if CORE.DW_ModState09.GetValue() == 1	;remove visuals
-					akActor.RemoveSpell(CORE.DW_Visuals_Spell)
-				endif
-				if CORE.DW_ModState10.GetValue() == 1	;remove sound
-					akActor.RemoveSpell(CORE.DW_Heart_Spell)
-					akActor.RemoveSpell(CORE.DW_Breath_Spell)
-				endif
-			endif
-		endif
-	endif
+  if CORE.Plugin_SL
+    Quest SexLabQuest = Quest.GetQuest("SexLabQuestFramework")
+    if (SexLabQuest)
+      SexLabFramework SexLab = SexLabQuest as SexLabFramework
+      
+      sslThreadController thread = SexLab.GetController(strArg as int)
+      if thread.HasPlayer == true
+        Actor akActor = Game.GetPlayer()
+        CORE.DW_bAnimating.SetValue(1)
+        if CORE.DW_ModState09.GetValue() == 1 ;remove visuals
+          akActor.RemoveSpell(CORE.DW_Visuals_Spell)
+        endif
+        if CORE.DW_ModState10.GetValue() == 1 ;remove sound
+          akActor.RemoveSpell(CORE.DW_Heart_Spell)
+          akActor.RemoveSpell(CORE.DW_Breath_Spell)
+        endif
+      endif
+    endif
+  endif
 EndEvent
 
 Event OnAnimationEnd(string eventName, string strArg, float numArg, Form sender)
-	if CORE.Plugin_SL
-		Quest SexLabQuest = Quest.GetQuest("SexLabQuestFramework")
-		if (SexLabQuest)
-			SexLabFramework SexLab = SexLabQuest as SexLabFramework
-			
-			sslThreadController thread = SexLab.GetController(strArg as int)
-			if thread.HasPlayer == true
-				CORE.DW_bAnimating.SetValue(0)
-			endif
-		endif
-	endif
+  if CORE.Plugin_SL
+    Quest SexLabQuest = Quest.GetQuest("SexLabQuestFramework")
+    if (SexLabQuest)
+      SexLabFramework SexLab = SexLabQuest as SexLabFramework
+      
+      sslThreadController thread = SexLab.GetController(strArg as int)
+      if thread.HasPlayer == true
+        CORE.DW_bAnimating.SetValue(0)
+      endif
+    endif
+  endif
 EndEvent
