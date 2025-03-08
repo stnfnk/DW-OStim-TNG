@@ -8,16 +8,20 @@ Int Sound1ID = 0
 Int Sound2ID = 0
 float strSound
 
-Event OnEffectStart( Actor akTarget, Actor akCaster )
+Event OnEffectStart(Actor akTarget, Actor akCaster)
   akActor = akTarget
   CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
   RegisterForSingleUpdate(1)
 EndEvent
 
 Event OnUpdate()
+  ; Add null check to prevent error
+  if akActor == None
+    return
+  endif
+  
   ;sound heartbeat high,low,none
-  ;CORE.sexlab.Log(Sound1ID+" Beat cycle start "+Sound2ID)
-  if CORE.DW_ModState06.GetValue() == 1         ;heartbeat sound enabled
+  if CORE.DW_ModState06.GetValue() == 1                    ;heartbeat sound enabled
     float rank = CORE.SLA.GetActorArousal(akActor)
     if CORE.DW_ModState11.GetValue() == 0
       strSound = rank/100
@@ -25,42 +29,53 @@ Event OnUpdate()
       strSound = 1
     endif
 
-    if rank >= CORE.DW_effects_heavy.GetValue()     ;high arousal
+    if rank >= CORE.DW_effects_heavy.GetValue()            ;high arousal
       if Sound1ID != 0
-        ;CORE.sexlab.Log(Sound1ID+" Beat1 stop")
         Sound.StopInstance(Sound1ID)
         Sound1ID = 0
       endif
       if Sound2ID == 0
         Sound2ID = CORE.Heartbeat2.play(akActor)
-        ;CORE.sexlab.Log(Sound2ID+" Beat2 start")
         Sound.SetInstanceVolume(Sound2ID, strSound)
       else
-        ;CORE.sexlab.Log(Sound2ID+" Beat2 update")
         Sound.SetInstanceVolume(Sound2ID, strSound)
       endif
-    elseif rank >= CORE.DW_effects_light.GetValue()   ;low arousal
+    elseif rank >= CORE.DW_effects_light.GetValue()        ;low arousal
       if Sound2ID != 0
-        ;CORE.sexlab.Log(Sound2ID+" Beat2 stop")
         Sound.StopInstance(Sound2ID)
         Sound2ID = 0
       endif
       if Sound1ID == 0
-        ;CORE.sexlab.Log(Sound1ID+" Beat1 start")
         Sound1ID = CORE.Heartbeat1.play(akActor)
         Sound.SetInstanceVolume(Sound1ID, strSound)
       else
-        ;CORE.sexlab.Log(Sound1ID+" Beat1 update")
         Sound.SetInstanceVolume(Sound1ID, strSound)
       endif
-    else                        ;no arousal
-      ;CORE.sexlab.Log("Arousal too low, Heartbeat effect stopping " +Sound1ID + " | " + Sound2ID)
+    else                                                ;no arousal
       akActor.RemoveSpell(CORE.DW_Heart_Spell)
       return
     endif
+    
+    ; Add animation check which was missing in original
+    if CORE.DW_bAnimating.GetValue() == 1 && CORE.DW_ModState10.GetValue() == 1
+      if Sound1ID != 0
+        Sound.StopInstance(Sound1ID)
+        Sound1ID = 0
+      endif
+      if Sound2ID != 0
+        Sound.StopInstance(Sound2ID)
+        Sound2ID = 0 
+      endif
+    endif
+    
     if akActor.HasSpell(CORE.DW_Heart_Spell)
-      RegisterForSingleUpdate(CORE.DW_SpellsUpdateTimer.GetValue())
-      return
+      if akActor && akActor.Is3DLoaded() && akActor.GetParentCell()
+        RegisterForSingleUpdate(CORE.DW_SpellsUpdateTimer.GetValue())
+        return
+      else
+        ; Actor isn't loaded in 3D or has no parent cell - don't try to update
+        return
+      endif
     endif
   endif
   akActor.RemoveSpell(CORE.DW_Heart_Spell)
@@ -68,17 +83,16 @@ EndEvent
 
 Event OnPlayerLoadGame()
   CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
-  ;CORE.sexlab.Log("OnPlayerLoadGame(), Heartbeat effect stopping ")
-  akActor.RemoveSpell(CORE.DW_Heart_Spell)
+  if akActor != None
+    akActor.RemoveSpell(CORE.DW_Heart_Spell)
+  endif
 EndEvent
 
-Event OnEffectFinish( Actor akTarget, Actor akCaster )
+Event OnEffectFinish(Actor akTarget, Actor akCaster)
   if Sound1ID != 0
     Sound.StopInstance(Sound1ID)
-    ;CORE.sexlab.Log("Beat1 removed")
   endif
   if Sound2ID != 0
     Sound.StopInstance(Sound2ID)
-    ;CORE.sexlab.Log("Beat2 removed")
   endif
 EndEvent

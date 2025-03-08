@@ -5,13 +5,18 @@ DW_CORE CORE
 Actor akActor
 float strVisual
 
-Event OnEffectStart( Actor akTarget, Actor akCaster )
+Event OnEffectStart(Actor akTarget, Actor akCaster)
   akActor = akCaster
   CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
   RegisterForSingleUpdate(1)
 EndEvent
 
 Event OnUpdate()
+  ; Add null check to prevent error
+  if akActor == None
+    return
+  endif
+  
   ;play loop if:
   ;either visuals enabled
   ;not Blindfolded
@@ -20,7 +25,7 @@ Event OnUpdate()
     if CORE.DDi.IsWearingDDBlindfold(akActor) == false && CORE.zbf.IsWearingZaZBlindfold(akActor) == false 
       if (CORE.DW_bAnimating.GetValue() == 1 && CORE.DW_ModState09.GetValue() != 1) || CORE.DW_bAnimating.GetValue() == 0
         float rank = CORE.SLA.GetActorArousal(akActor)
-        strVisual = rank / 100            ;effect strength
+        strVisual = rank / 100                        ;effect strength
 
         ;visual high
         if CORE.DW_ModState05.GetValue() == 1 && rank >= CORE.DW_effects_heavy.GetValue()
@@ -35,6 +40,7 @@ Event OnUpdate()
         else
           CORE.LowArousalVisual.Remove()
         endif
+        
         if akActor.HasSpell(CORE.DW_Visuals_Spell)
           RegisterForSingleUpdate(CORE.DW_SpellsUpdateTimer.GetValue())
           return
@@ -42,16 +48,18 @@ Event OnUpdate()
       endif
     endif
   endif
+  
   akActor.RemoveSpell(CORE.DW_Visuals_Spell)
 EndEvent
 
 Event OnPlayerLoadGame()
   CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
-  ;CORE.sexlab.Log("OnPlayerLoadGame(), visuals effect stopping ")
-  akActor.RemoveSpell(CORE.DW_Visuals_Spell)
+  if akActor != None
+    akActor.RemoveSpell(CORE.DW_Visuals_Spell)
+  endif
 EndEvent
 
-Event OnEffectFinish( Actor akTarget, Actor akCaster )
+Event OnEffectFinish(Actor akTarget, Actor akCaster)
   CORE.HighArousalVisual.Remove()
   CORE.LowArousalVisual.Remove()
 EndEvent

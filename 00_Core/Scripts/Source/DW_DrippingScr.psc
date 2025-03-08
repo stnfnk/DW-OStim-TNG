@@ -4,8 +4,11 @@ DW_CORE CORE
 
 Event OnInit()
   CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
-  CORE.Startup()
-  ;debug.Notification("$DW_INITDONE")
+  If CORE
+    CORE.Startup()
+  Else
+    Debug.Trace("DW_DrippingScr - Unable to initialize CORE reference")
+  EndIf
 Endevent
 
 ;rebuild json
@@ -22,15 +25,20 @@ Endevent
 
 Event OnPlayerLoadGame()
   CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
-  ;DW_JsonRebuild()
-  CORE.Startup()
+  If CORE
+    CORE.Startup()
+  Else
+    Debug.Trace("DW_DrippingScr - Failed to get CORE reference on player load game")
+  EndIf
 EndEvent
 
-Event OnObjectUnequipped( Form akBaseObject, ObjectReference akReference )
+Event OnObjectUnequipped(Form akBaseObject, ObjectReference akReference)
   Actor akActor = GetActorRef()
-  if akActor
-    if !(CORE.DDi.IsWearingDDGag(akActor)) && !(CORE.zbf.IsWearingZaZGag(akActor))
-      akActor.RemoveSpell(CORE.DW_DrippingGag_Spell)
-    endif
-  endif
+  If !akActor || !CORE || !CORE.DDi || !CORE.zbf
+    Return
+  EndIf
+  
+  If !(CORE.DDi.IsWearingDDGag(akActor)) && !(CORE.zbf.IsWearingZaZGag(akActor))
+    akActor.RemoveSpell(CORE.DW_DrippingGag_Spell)
+  EndIf
 EndEvent
