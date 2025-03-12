@@ -220,7 +220,6 @@ Function Orgasm(Actor akActor, String _args)
     if Utility.RandomInt(0, 100) <= Chance
       ; Cast squirt spell immediately without any waits
       CORE.DW_DrippingSquirt_Spell.cast(akActor)
-      
       if CORE.Plugin_MinAI
         MinAI_RegisterEvent(GetActorName(akActor) + " climaxed so hard she squirted!", "info_sexscene")
       endif
@@ -231,27 +230,32 @@ Function Orgasm(Actor akActor, String _args)
   bool processMilk = akActor.GetLeveledActorBase().GetSex() == 1 && \
                     ((CORE.DW_ModState16.GetValue() == 1 && akActor == Game.GetPlayer()) || \
                      (CORE.DW_ModState17.GetValue() == 1 && akActor != Game.GetPlayer()))
-  
   if processMilk
     if CORE.Plugin_OLactis
-      Quest OLactisQuest = Game.GetFormFromFile(0x000D61, "OninusLactis.esp") as Quest
-      if OLactisQuest
-        if CORE.Plugin_OStim
-          int orgasms = OActor.GetTimesClimaxed(akActor)
-          float duration = (orgasms + 2.2)
-          int level = orgasms - 1
-          if level > 2
-            level = 2
-          endif
-          (OLactisQuest as OninusLactis).PlayNippleSquirt(akActor, duration, level)
-        else
-          (OLactisQuest as OninusLactis).PlayNippleSquirt(akActor, 3.7, 0)
-        endif
+      int level = 0
+      int orgasms = 1      
+      if CORE.Plugin_OStim
+        orgasms = OActor.GetTimesClimaxed(akActor)
+      endif
+      int duration = (2 * orgasms + 3)
+      if orgasms >= 5
+        level = 2
+      elseif orgasms >= 3
+        level = 1
+      endif
+      int eventID = ModEvent.Create("OLactis.Lactating")
+      if eventID
+        ModEvent.PushForm(eventID, akActor as Form)
+        ModEvent.PushInt(eventID, duration)
+        ModEvent.PushInt(eventID, level)
+        ModEvent.Send(eventID)
+        Debug.Trace("DW sent Oninus Lactis lactation event for " + akActor.GetDisplayName())
+      else
+        Debug.Trace("DW failed to create Oninus Lactis ModEvent.")
       endif
     else
       CORE.DW_Milkleak_Spell.cast(akActor)
-    endif
-    
+    endif    
     if CORE.Plugin_MinAI
       MinAI_RegisterEvent("Arousal and stimulation are causing milk to leak from " + GetActorName(akActor) + "'s nipples", "info_sexscene")
     endif

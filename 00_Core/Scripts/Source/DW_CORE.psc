@@ -85,110 +85,110 @@ Bool Property Plugin_FGSE = false Auto  ;FlowerGirls
 Bool Property Plugin_AR = false Auto  ;FlowerGirls
 
 Function Startup()
-    Plugin_DD = (Game.GetModbyName("Devious Devices - Assets.esm") != 255)
-    Plugin_ZaZ = (Game.GetModbyName("ZaZAnimationPack.esm") != 255)
-    Plugin_SOS = (Game.GetModbyName("Schlongs of Skyrim.esp") != 255)
-    Plugin_TNG = (Game.GetModbyName("TheNewGentleman.esp") != 255)
-    Plugin_MinAI = (Game.GetModbyName("MinAI.esp") != 255)
-    Plugin_Appr2 = (Game.GetModbyName("Apropos2.esp") != 255)
-    Plugin_OLactis = (Game.GetModbyName("OninusLactis.esp") != 255)
-    Plugin_OStim = (Game.GetModbyName("OStim.esp") != 255)
-    Plugin_SL = (Game.GetModbyName("SexLab.esm") != 255)
-    Plugin_SLAR = (Game.GetModbyName("SexLabAroused.esm") != 255)
-    Plugin_FGSE = (Game.GetModbyName("FlowerGirls SE.esm") != 255)
-    Plugin_AR = (Game.GetModbyName("ArousedRedux.esm") != 255)
+  Plugin_DD = (Game.GetModbyName("Devious Devices - Assets.esm") != 255)
+  Plugin_ZaZ = (Game.GetModbyName("ZaZAnimationPack.esm") != 255)
+  Plugin_SOS = (Game.GetModbyName("Schlongs of Skyrim.esp") != 255)
+  Plugin_TNG = (Game.GetModbyName("TheNewGentleman.esp") != 255)
+  Plugin_MinAI = (Game.GetModbyName("MinAI.esp") != 255)
+  Plugin_Appr2 = (Game.GetModbyName("Apropos2.esp") != 255)
+  Plugin_OLactis = (Game.GetModbyName("OninusLactis.esp") != 255)
+  Plugin_OStim = (Game.GetModbyName("OStim.esp") != 255)
+  Plugin_SL = (Game.GetModbyName("SexLab.esm") != 255)
+  Plugin_SLAR = (Game.GetModbyName("SexLabAroused.esm") != 255)
+  Plugin_FGSE = (Game.GetModbyName("FlowerGirls SE.esm") != 255)
+  Plugin_AR = (Game.GetModbyName("ArousedRedux.esm") != 255)
+
+  if Plugin_OStim
+    SL.RegisterForModEvent("ostim_thread_start", "OStimManager")
+    SL.RegisterForModEvent("ostim_thread_scenechanged", "OStimManager")
+    SL.RegisterForModEvent("ostim_thread_speedchanged", "OStimManager")
+    SL.RegisterForModEvent("ostim_actor_orgasm", "OStimManager")
+    SL.RegisterForModEvent("ostim_thread_end", "OStimManager")
+  endif
+
+  if Plugin_SL
+    SL.RegisterForModEvent("OrgasmStart", "OnSexLabOrgasm")
+    SL.RegisterForModEvent("SexLabOrgasmSeparate", "OnSexLabOrgasmSeparate")
+    SL.RegisterForModEvent("DeviceActorOrgasm", "OnDDOrgasm")
+    SL.RegisterForModEvent("AnimationStart", "OnAnimationStart")
+    SL.RegisterForModEvent("AnimationEnd", "OnAnimationEnd")
+    SL.RegisterForModEvent("StageStart", "OnSexLabStageChange")
+  endif
+
+  RegisterForModEvent("RestoreVirginity", "RV")
   
-    if Plugin_OStim
-        SL.RegisterForModEvent("ostim_thread_start", "OStimManager")
-        SL.RegisterForModEvent("ostim_thread_scenechanged", "OStimManager")
-        SL.RegisterForModEvent("ostim_thread_speedchanged", "OStimManager")
-        SL.RegisterForModEvent("ostim_actor_orgasm", "OStimManager")
-        SL.RegisterForModEvent("ostim_thread_end", "OStimManager")
-    endif
-  
-    if Plugin_SL
-        SL.RegisterForModEvent("OrgasmStart", "OnSexLabOrgasm")
-        SL.RegisterForModEvent("SexLabOrgasmSeparate", "OnSexLabOrgasmSeparate")
-        SL.RegisterForModEvent("DeviceActorOrgasm", "OnDDOrgasm")
-        SL.RegisterForModEvent("AnimationStart", "OnAnimationStart")
-        SL.RegisterForModEvent("AnimationEnd", "OnAnimationEnd")
-        SL.RegisterForModEvent("StageStart", "OnSexLabStageChange")
-    endif
-  
-    RegisterForModEvent("RestoreVirginity", "RV")
-    
-    Utility.wait(1)
-    DW_PluginsCheck.SetValue(1)
-    Maintenance()
-    DW_VirginsClaimedTG.Revert()
-    RegisterForSingleUpdate(1)
+  Utility.wait(1)
+  DW_PluginsCheck.SetValue(1)
+  Maintenance()
+  DW_VirginsClaimedTG.Revert()
+  RegisterForSingleUpdate(1)
 EndFunction
 
 Function Maintenance()
-    ; Check thresholds - possibly original validation logic
-    if DW_effects_heavy.GetValue() < 0 || DW_effects_heavy.GetValue() >= 100
-        DW_effects_heavy.SetValue(66)
-    endif
-    if DW_effects_light.GetValue() < 0 || DW_effects_light.GetValue() >= 100
-        DW_effects_light.SetValue(33)
-    endif
-    
-    ; Ensure light threshold is lower than heavy
-    if DW_effects_light.GetValue() >= DW_effects_heavy.GetValue() && DW_effects_heavy.GetValue() >= 1
-        DW_effects_light.SetValue(DW_effects_heavy.GetValue() - 1)
-    endif
+  ; Check thresholds - possibly original validation logic
+  if DW_effects_heavy.GetValue() < 0 || DW_effects_heavy.GetValue() >= 100
+    DW_effects_heavy.SetValue(66)
+  endif
+  if DW_effects_light.GetValue() < 0 || DW_effects_light.GetValue() >= 100
+    DW_effects_light.SetValue(33)
+  endif
+  
+  ; Ensure light threshold is lower than heavy
+  if DW_effects_light.GetValue() >= DW_effects_heavy.GetValue() && DW_effects_heavy.GetValue() >= 1
+    DW_effects_light.SetValue(DW_effects_heavy.GetValue() - 1)
+  endif
 EndFunction
 
 Event OnUpdate()
-    Actor akActor = Game.GetPlayer()
-    float rank = SLA.GetActorArousal(akActor)
-    
-    ; Visuals
-    if (!akActor.HasSpell(DW_Visuals_Spell)) && (DW_ModState05.GetValue() == 1 || DW_ModState07.GetValue() == 1) && rank > DW_effects_light.GetValue()
-        akActor.AddSpell(DW_Visuals_Spell, false)
-    elseif (akActor.HasSpell(DW_Visuals_Spell)) && (DW_ModState05.GetValue() == 0 && DW_ModState07.GetValue() == 0 || rank <= DW_effects_light.GetValue())
-        akActor.RemoveSpell(DW_Visuals_Spell)
+  Actor akActor = Game.GetPlayer()
+  float rank = SLA.GetActorArousal(akActor)
+  
+  ; Visuals
+  if (!akActor.HasSpell(DW_Visuals_Spell)) && (DW_ModState05.GetValue() == 1 || DW_ModState07.GetValue() == 1) && rank > DW_effects_light.GetValue()
+    akActor.AddSpell(DW_Visuals_Spell, false)
+  elseif (akActor.HasSpell(DW_Visuals_Spell)) && (DW_ModState05.GetValue() == 0 && DW_ModState07.GetValue() == 0 || rank <= DW_effects_light.GetValue())
+    akActor.RemoveSpell(DW_Visuals_Spell)
+  endif
+  
+  ; Heart
+  if !akActor.HasSpell(DW_Heart_Spell) && DW_ModState06.GetValue() == 1 && rank > DW_effects_light.GetValue()
+    akActor.AddSpell(DW_Heart_Spell, false)
+  elseif akActor.HasSpell(DW_Heart_Spell) && (DW_ModState06.GetValue() == 0 || rank <= DW_effects_light.GetValue())
+    akActor.RemoveSpell(DW_Heart_Spell)
+  endif
+  
+  ; Breath
+  if !akActor.HasSpell(DW_Breath_Spell) && DW_ModState08.GetValue() == 1 && rank > DW_effects_light.GetValue()
+    akActor.AddSpell(DW_Breath_Spell, false)
+  elseif akActor.HasSpell(DW_Breath_Spell) && (DW_ModState08.GetValue() == 0 || rank <= DW_effects_light.GetValue())
+    akActor.RemoveSpell(DW_Breath_Spell)
+  endif
+  
+  ; Dripping
+  if rank >= DW_Arousal_threshold.GetValue() && DW_ModState01.GetValue() == 1
+    if DW_bUseSLGenderForDripp.GetValue() != 1 || (SL.GetGender(akActor) == 1 && akActor.GetLeveledActorBase().GetSex() == 1 && DW_bUseSLGenderForDripp.GetValue() == 1)
+      DW_Dripping_Spell.cast(akActor)
     endif
-    
-    ; Heart
-    if !akActor.HasSpell(DW_Heart_Spell) && DW_ModState06.GetValue() == 1 && rank > DW_effects_light.GetValue()
-        akActor.AddSpell(DW_Heart_Spell, false)
-    elseif akActor.HasSpell(DW_Heart_Spell) && (DW_ModState06.GetValue() == 0 || rank <= DW_effects_light.GetValue())
-        akActor.RemoveSpell(DW_Heart_Spell)
-    endif
-    
-    ; Breath
-    if !akActor.HasSpell(DW_Breath_Spell) && DW_ModState08.GetValue() == 1 && rank > DW_effects_light.GetValue()
-        akActor.AddSpell(DW_Breath_Spell, false)
-    elseif akActor.HasSpell(DW_Breath_Spell) && (DW_ModState08.GetValue() == 0 || rank <= DW_effects_light.GetValue())
-      akActor.RemoveSpell(DW_Breath_Spell)
-    endif
-    
-    ; Dripping
-    if rank >= DW_Arousal_threshold.GetValue() && DW_ModState01.GetValue() == 1
-        if DW_bUseSLGenderForDripp.GetValue() != 1 || (SL.GetGender(akActor) == 1 && akActor.GetLeveledActorBase().GetSex() == 1 && DW_bUseSLGenderForDripp.GetValue() == 1)
-            DW_Dripping_Spell.cast(akActor)
-        endif
-    endif
-    
-    ; Gag
-    if (DDi.IsWearingDDGag(akActor) || zbf.IsWearingZaZGag(akActor)) && DW_ModState04.GetValue() == 1
-        DW_DrippingGag_Spell.cast(akActor)
-    endif
-    
-    RegisterForSingleUpdate(DW_Timer.GetValue())
+  endif
+  
+  ; Gag
+  if (DDi.IsWearingDDGag(akActor) || zbf.IsWearingZaZGag(akActor)) && DW_ModState04.GetValue() == 1
+    DW_DrippingGag_Spell.cast(akActor)
+  endif
+  
+  RegisterForSingleUpdate(DW_Timer.GetValue())
 EndEvent
 
 Event RV(Form apForm)
-    Actor akActor = apForm as Actor
-    if akActor != None 
-        if DW_VirginsList.HasForm(akActor)
-            DW_VirginsList.RemoveAddedForm(akActor)
-            debug.Trace(akActor.GetLeveledActorBase().GetName() + " virginity restored")
-        endif
-        if akActor == Game.GetPlayer()
-            DW_bPlayerIsVirgin.SetValue(1)
-            debug.Trace("PC virginity restored")
-        endif
+  Actor akActor = apForm as Actor
+  if akActor != None 
+    if DW_VirginsList.HasForm(akActor)
+      DW_VirginsList.RemoveAddedForm(akActor)
+      debug.Trace(akActor.GetLeveledActorBase().GetName() + " virginity restored")
     endif
+    if akActor == Game.GetPlayer()
+      DW_bPlayerIsVirgin.SetValue(1)
+      debug.Trace("PC virginity restored")
+    endif
+  endif
 EndEvent
