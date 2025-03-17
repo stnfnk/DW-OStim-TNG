@@ -5,11 +5,17 @@ Event OnInit()
 EndEvent
 
 int Function GetActorArousal(Actor akActor)
+  if !akActor
+    return 0
+  endif
   DW_CORE CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
+  if !CORE
+    return 0
+  endif
   Faction slaArousal
   int rank = 0
   
-  ;Sexlab
+  ;Sexlab Aroused or OSL
   if CORE.Plugin_SLAR
     slaArousal = Game.GetFormFromFile(0x3FC36, "SexLabAroused.esm") As Faction
     if ( slaArousal )
@@ -20,7 +26,7 @@ int Function GetActorArousal(Actor akActor)
     endIf
   endIf
   
-  ;Flower grils
+  ;Flower Girls
   if CORE.Plugin_AR
     slaArousal = Game.GetFormFromFile(0x3FC36, "ArousedRedux.esm") As Faction
     if ( slaArousal )

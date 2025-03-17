@@ -17,7 +17,6 @@ Event OnInit()
     TNG_Gentlewoman = Game.GetFormFromFile(0xFF8, "TheNewGentleman.esp") as Keyword
     TNG_XL = Game.GetFormFromFile(0xFE5, "TheNewGentleman.esp") as Keyword
   EndIf
-  RegisterForModEvent("ostim_thread_start", "OStimManager")
 EndEvent
 
 
@@ -97,6 +96,10 @@ Event OStimManager(string eventName, string _args, float numArg, Form sender)
     ; Process virginity checks
     ProcessVirginityChecks(ostimTid)
   elseif eventName == "ostim_thread_end"
+    if CORE.Plugin_OLactis
+      Int eventID = ModEvent.Create("OLactis.Cleanup")
+      ModEvent.Send(eventID)
+    endif
     CORE.DW_bAnimating.SetValue(0)
   endif
 EndEvent
@@ -232,16 +235,21 @@ Function Orgasm(Actor akActor, String _args)
                      (CORE.DW_ModState17.GetValue() == 1 && akActor != Game.GetPlayer()))
   if processMilk
     if CORE.Plugin_OLactis
+      int duration = 6
       int level = 0
       int orgasms = 1      
       if CORE.Plugin_OStim
         orgasms = OActor.GetTimesClimaxed(akActor)
-      endif
-      int duration = (2 * orgasms + 3)
-      if orgasms >= 5
-        level = 2
-      elseif orgasms >= 3
-        level = 1
+        duration = (2 * orgasms + 3)
+        if orgasms > 5
+          level = Utility.RandomInt(0, 2)
+        elseif orgasms == 5
+          level = 2
+        elseif orgasms == 1
+          level = 0
+        else
+          level = Utility.RandomInt(0, 1)
+        endif
       endif
       int eventID = ModEvent.Create("OLactis.Lactating")
       if eventID
@@ -255,7 +263,7 @@ Function Orgasm(Actor akActor, String _args)
       endif
     else
       CORE.DW_Milkleak_Spell.cast(akActor)
-    endif    
+    endif
     if CORE.Plugin_MinAI
       MinAI_RegisterEvent("Arousal and stimulation are causing milk to leak from " + GetActorName(akActor) + "'s nipples", "info_sexscene")
     endif
@@ -462,5 +470,9 @@ Event OnAnimationEnd(string eventName, string strArg, float numArg, Form sender)
 				CORE.DW_bAnimating.SetValue(0)
 			endif
 		endif
+    if CORE.Plugin_OLactis
+      Int eventID = ModEvent.Create("OLactis.Cleanup")
+      ModEvent.Send(eventID)
+    endif
 	endif
 EndEvent

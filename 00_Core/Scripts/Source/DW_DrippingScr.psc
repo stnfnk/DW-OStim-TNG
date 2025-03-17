@@ -1,6 +1,6 @@
 Scriptname DW_DrippingScr extends ReferenceAlias
 
-DW_CORE CORE
+DW_CORE Property CORE Auto
 
 Event OnInit()
   CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
@@ -33,12 +33,41 @@ Event OnPlayerLoadGame()
 EndEvent
 
 Event OnObjectUnequipped(Form akBaseObject, ObjectReference akReference)
+  ; Get actor reference and validate
   Actor akActor = GetActorRef()
-  If !akActor || !CORE || !CORE.DDi || !CORE.zbf
+  If !akActor
+    Debug.Trace("DW_DrippingScr - OnObjectUnequipped - No actor reference")
     Return
   EndIf
   
-  If !(CORE.DDi.IsWearingDDGag(akActor)) && !(CORE.zbf.IsWearingZaZGag(akActor))
+  ; Validate CORE
+  If !CORE
+    Debug.Trace("DW_DrippingScr - OnObjectUnequipped - Missing CORE reference")
+    Return
+  EndIf
+  
+  ; Check if we have at least one gag detection system available
+  Bool hasDDi = (CORE.DDi != None)
+  Bool hasZBF = (CORE.zbf != None)
+  
+  If !hasDDi && !hasZBF
+    Debug.Trace("DW_DrippingScr - OnObjectUnequipped - No gag detection interfaces available")
+    Return
+  EndIf
+  
+  ; Check if wearing any gag using available systems
+  Bool isWearingGag = False
+  
+  If hasDDi && CORE.DDi.IsWearingDDGag(akActor)
+    isWearingGag = True
+  EndIf
+  
+  If !isWearingGag && hasZBF && CORE.zbf.IsWearingZaZGag(akActor)
+    isWearingGag = True
+  EndIf
+  
+  ; If not wearing any gag, remove the spell
+  If !isWearingGag && akActor.HasSpell(CORE.DW_DrippingGag_Spell)
     akActor.RemoveSpell(CORE.DW_DrippingGag_Spell)
   EndIf
 EndEvent

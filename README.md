@@ -7,7 +7,7 @@ Updated Classic SL/FG Arousal mod by Ed86
 * ESL flagged and Form 44 for your pleasure.
 
 ## Requirements
-- Requires SPID and SKSE
+- Requires PapyrusUtil, SPID, and SKSE
 - Default SL install for SL/OStim.
 - Choose SOS install for SOS/TNG.
 

@@ -1,6 +1,5 @@
 Scriptname DW_CORE extends Quest
 
-; Properties
 DW_SOS property SOS auto
 DW_SL property SL auto
 DW_SLA property SLA auto
