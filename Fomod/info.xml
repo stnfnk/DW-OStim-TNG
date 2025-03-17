@@ -1,11 +1,11 @@
 ﻿<fomod>
   <Name>Dripping When Aroused NG</Name>
-  <Version>1.3.2</Version>
+  <Version>1.3.3</Version>
   <Author>Ed86, updated 2024 by stnfnk</Author>
   <Description>
   
 Requires (Sexlab or OStim):
--SKSE + SPID
+-SKSE + PapyrusUtil + SPID
 -SexLab Framework or OStim (SA)
 -(Optional) SexLab Aroused or OSL Aroused, required for dripping based on arousal
 -(Optional) SOS Full or TNG, required for futa support
@@ -14,7 +14,7 @@ Requires (Sexlab or OStim):
 OR
 
 Requires (Flower Girls):
--SKSE + SPID
+-SKSE + PapyrusUtil + SPID
 -Flower Girls SE
 -(Optional) Aroused (Redux), required for dripping based on arousal
 -(Optional) SOS Full or TNG + PapyrusUtil, required for futa support
