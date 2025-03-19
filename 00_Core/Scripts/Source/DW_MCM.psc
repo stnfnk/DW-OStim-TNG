@@ -180,7 +180,7 @@ function Page_Virginity()
   i = DW_VirginsList.GetSize()
   while i > 0
     if DW_VirginsList.GetAt(i) as Actor != None
-      if (DW_VirginsClaimed.GetAt(i) as Actor).GetLeveledActorBase().GetName() != ""
+      if (DW_VirginsList.GetAt(i) as Actor).GetLeveledActorBase().GetName() != ""
         AddTextOption((DW_VirginsList.GetAt(i) as Actor).GetLeveledActorBase().GetName(), OPTION_FLAG_DISABLED)
       endif
     endif

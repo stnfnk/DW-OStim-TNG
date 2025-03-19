@@ -15,20 +15,36 @@ Event OnEffectStart(Actor akTarget, Actor akCaster)
   targetRef = akTarget
   CORE = Game.GetFormFromFile(0x862, "DW.esp") as DW_CORE
   if !targetRef || !CORE
+    Debug.Trace("DW_BreathSpellScr - OnEffectStart - Missing target or CORE reference")
     return
   endif
-  ; Use GameTime update to ensure initialization is complete
-  RegisterForSingleUpdateGameTime(0.01)
+  if self && self as activemagiceffect
+    RegisterForSingleUpdateGameTime(0.01)
+  else
+    Debug.Trace("DW_BreathSpellScr - Failed to register for GameTime update - invalid script state")
+  endif
 EndEvent
 
 Event OnUpdateGameTime()
-  ; Now we're guaranteed to be initialized, switch to regular updates
-  RegisterForSingleUpdate(1.0)
+  if self && self as activemagiceffect
+    ; Now we're guaranteed to be initialized, switch to regular updates
+    RegisterForSingleUpdate(1.0)
+  else
+    Debug.Trace("DW_BreathSpellScr - Failed to switch to regular updates - invalid script state")
+  endif
 EndEvent
 
 Event OnUpdate()
   ; Early validation checks
   if !targetRef || !targetRef.Is3DLoaded() || !targetRef.GetParentCell()
+    ; Only register for retry if we're in a valid state
+    if self && self as activemagiceffect
+      Debug.Trace("[DW_BreathSpellScr] Target not loaded, will retry later. Target: " + targetRef)
+      ; Use GameTime instead of real-time for unloaded actors
+      RegisterForSingleUpdateGameTime(0.05)  ; Check again in 0.05 game hours
+    else
+      Debug.Trace("[DW_BreathSpellScr] Invalid script state, cannot retry")
+    endif
     return
   endif
   ; Validate CORE reference first
@@ -140,7 +156,11 @@ Event OnUpdate()
             nextUpdate = CORE.DW_SpellsUpdateTimer.GetValue() + Utility.RandomInt(1,2)
           endif
         endif
-        RegisterForSingleUpdate(nextUpdate)
+        if self && self as activemagiceffect
+          RegisterForSingleUpdate(nextUpdate)
+        else
+          Debug.Trace("DW_BreathSpellScr - Failed to register for next update - invalid script state")
+        endif
         return
       endif
     endif
@@ -157,8 +177,12 @@ Event OnPlayerLoadGame()
     return
   endif
   targetRef.RemoveSpell(CORE.DW_Breath_Spell)
-  ; Restart the update cycle with GameTime method
-  RegisterForSingleUpdateGameTime(0.01)
+  if self && self as activemagiceffect
+    ; Restart the update cycle with GameTime method
+    RegisterForSingleUpdateGameTime(0.01)
+  else
+    Debug.Trace("DW_BreathSpellScr - Failed to re-register after game load - invalid script state")
+  endif
 EndEvent
 
 Event OnEffectFinish(Actor akTarget, Actor akCaster)
